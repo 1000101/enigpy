@@ -41,7 +41,7 @@ class cracker():
         )    
         text = enigmai.EDcrypt(self.ttc)
         print ("DECRYPTED TEXT: "+text)
-        print ("STECKERS: %s" % enigmai.plugboard.pairs)  
+        print ("STECKERS: %s" % enigmai.plugboard.wiring)  
 
     def testHillClimb(self):
         #print ("testHillClimb")
@@ -132,9 +132,9 @@ class cracker():
                 for secondletter in letters: #check every combination of the most used letters one by one
                     if secondletter != firstletter:
                         plugboardtestpairs = {firstletter:secondletter}
-                        plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
+                        plugboardtestdict = dict(plugboardtestpairs, **plugboardi.wiring)
                         plugboardtest = Plugboard(plugboardtestdict)
-                        #print (plugboardtest.pairs)
+                        #print (plugboardtest.wiring)
                         enigmai = Enigma(rotors, reflectori, plugboardtest)    
                         text = enigmai.EDcrypt(self.ttc)
                         myscore = self.scorer.icscore(text)
@@ -156,17 +156,17 @@ class cracker():
             if best[0] in mostusedletters:
                 mostusedletters.remove(best[0])
            
-            plugboardi.pairs[best[0]] = best[1]
+            plugboardi.wiring[best[0]] = best[1]
             
             best[0] = ""
             best[1] = ""
             
-            #print ((plugboardi.pairs))
+            #print ((plugboardi.wiring))
 
         print('Finished in %.2f seconds.' % (time() - start))
 
         if not plugboardi:
-                return bestpairscoreIC, bestpairscoreGRAM, dict(plugboardi.pairs)
+                return bestpairscoreIC, bestpairscoreGRAM, dict(plugboardi.wiring)
 
         if bestpairscoreIC > score:
             # if we found something, we continue to hill-climb
@@ -183,9 +183,9 @@ class cracker():
                     for secondletter in letters: #check every combination of the most used letters one by one
                         if secondletter != firstletter:
                             plugboardtestpairs = {firstletter:secondletter}
-                            plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
+                            plugboardtestdict = dict(plugboardtestpairs, **plugboardi.wiring)
                             plugboardtest = Plugboard(plugboardtestdict)
-                            #print (plugboardtest.pairs)
+                            #print (plugboardtest.wiring)
                             enigmai = Enigma(rotors, reflectori, plugboardtest)    
                             text = enigmai.EDcrypt(self.ttc)
                             myscore = self.scorer.score(text)
@@ -205,19 +205,19 @@ class cracker():
             if best[0] in mostusedletters2ndrun:
                 mostusedletters2ndrun.remove(best[0])
            
-            plugboardi.pairs[best[0]] = best[1]
+            plugboardi.wiring[best[0]] = best[1]
             
             best[0] = ""
             best[1] = ""
 
-        #print ((plugboardi.pairs))
+        #print ((plugboardi.wiring))
 
         # IC calculation after the 2nd step of hill climb
         enigmai = Enigma(rotors, reflectori, plugboardi)    
         text = enigmai.EDcrypt(self.ttc)
         afterwardsIC = self.scorer.icscore(text)
 
-        return bestpairscoreIC, bestpairscoreGRAM, afterwardsIC, dict(plugboardi.pairs)
+        return bestpairscoreIC, bestpairscoreGRAM, afterwardsIC, dict(plugboardi.wiring)
 
     
 
@@ -237,9 +237,9 @@ class cracker():
             for firstletter in mostusedletters:
                 for secondletter in letters: #check every combination of the most used letters one by one
                     if secondletter != firstletter:
-                        #plugboardtest = dict(plugboardi.pairs)
+                        #plugboardtest = dict(plugboardi.wiring)
                         plugboardtestpairs = {firstletter:secondletter}
-                        plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
+                        plugboardtestdict = dict(plugboardtestpairs, **plugboardi.wiring)
                         plugboardtest = Plugboard(plugboardtestdict)
                         #print (plugboardtest)
                         enigmai = Enigma(rotors, reflectori, plugboardtest)    
@@ -255,7 +255,7 @@ class cracker():
             letters.remove(best[0])
             letters.remove(best[1])
             mostusedletters.remove(best[0])
-            plugboardi.pairs[best[0]] = best[1]
+            plugboardi.wiring[best[0]] = best[1]
             best[0] = ""
             best[1] = ""
 
@@ -293,11 +293,11 @@ class crackerParallel():
             for firstletter in mostusedletters:
                 for secondletter in letters: #check every combination of the most used letters one by one
                     if secondletter != firstletter:
-                        #plugboardtest = dict(plugboardi.pairs)
+                        #plugboardtest = dict(plugboardi.wiring)
                         plugboardtestpairs = {firstletter:secondletter}
-                        plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
+                        plugboardtestdict = dict(plugboardtestpairs, **plugboardi.wiring)
                         plugboardtest = Plugboard(plugboardtestdict)
-                        #print (plugboardtest.pairs)
+                        #print (plugboardtest.wiring)
                         enigmai = Enigma(rotors, reflectori, plugboardtest)    
                         text = enigmai.EDcrypt(self.ttc)
                         myscore = self.scorer.icscore(text)
@@ -319,15 +319,15 @@ class crackerParallel():
             if best[0] in mostusedletters:
                 mostusedletters.remove(best[0])
            
-            plugboardi.pairs[best[0]] = best[1]
+            plugboardi.wiring[best[0]] = best[1]
             
             best[0] = ""
             best[1] = ""
             
-            #print ((plugboardi.pairs))
+            #print ((plugboardi.wiring))
 
         if not plugboardi:
-                return bestpairscoreIC, bestpairscoreGRAM, dict(plugboardi.pairs)
+                return bestpairscoreIC, bestpairscoreGRAM, dict(plugboardi.wiring)
 
         if plugsGRAM > 0:
             # if we found something, we continue to hill-climb
@@ -342,9 +342,9 @@ class crackerParallel():
                     for secondletter in letters: #check every combination of the most used letters one by one
                         if secondletter != firstletter:
                             plugboardtestpairs = {firstletter:secondletter}
-                            plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
+                            plugboardtestdict = dict(plugboardtestpairs, **plugboardi.wiring)
                             plugboardtest = Plugboard(plugboardtestdict)
-                            #print (plugboardtest.pairs)
+                            #print (plugboardtest.wiring)
                             enigmai = Enigma(rotors, reflectori, plugboardtest)    
                             text = enigmai.EDcrypt(self.ttc)
                             myscore = self.scorer.score(text)
@@ -362,19 +362,19 @@ class crackerParallel():
             if best[0] in mostusedletters2ndrun:
                 mostusedletters2ndrun.remove(best[0])
            
-            plugboardi.pairs[best[0]] = best[1]
+            plugboardi.wiring[best[0]] = best[1]
             
             best[0] = ""
             best[1] = ""
 
-        #print ((plugboardi.pairs))
+        #print ((plugboardi.wiring))
 
         # IC calculation after the 2nd step of hill climb
         enigmai = Enigma(rotors, reflectori, plugboardi)    
         text = enigmai.EDcrypt(self.ttc)
         afterwardsIC = self.scorer.icscore(text)
 
-        return bestpairscoreIC, bestpairscoreGRAM, afterwardsIC, dict(plugboardi.pairs)
+        return bestpairscoreIC, bestpairscoreGRAM, afterwardsIC, dict(plugboardi.wiring)
 
 
 #there are two possible methods to do brute force + hill-climbing. Each comprises of several steps
@@ -594,7 +594,7 @@ class crackerParallel():
             plugboardtestpairs = {}
             #for sub in (itertools.combinations(letters, 2)): #all letters
             for sub in (itertools.product(mostusedletters, letters)):
-                plugboardtestpairs = dict(plugboardi.pairs)
+                plugboardtestpairs = dict(plugboardi.wiring)
                 plugboardtestpairs[sub[0]] = sub[1]
                 plugboardtest = Plugboard(plugboardtestpairs)
                 enigmai = Enigma(rotors, reflectori, plugboardtest)    
@@ -608,9 +608,9 @@ class crackerParallel():
             if lettersToRemove:
                 letters.remove(lettersToRemove[0])
                 letters.remove(lettersToRemove[1])
-                plugboardi.pairs[lettersToRemove[0]] = lettersToRemove[1]
+                plugboardi.wiring[lettersToRemove[0]] = lettersToRemove[1]
 
-        return topscore, dict(plugboardi.pairs)
+        return topscore, dict(plugboardi.wiring)
 
 def final(subset, q):
     #insert the scrambled text 547 char long

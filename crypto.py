@@ -1,7 +1,6 @@
 from string import ascii_uppercase as pomlist
 
-class Enigma():
-
+class Enigma:
     mapping = {c: ord(c) - 65 for c in pomlist}
 
     def __init__(self, rotors: dict, reflector, plugboard):
@@ -55,8 +54,8 @@ class Enigma():
     
             onecipher = letter
             
-            if onecipher in self.plugboard.pairs:
-                onecipher = self.plugboard.pairs.get(onecipher)
+            if onecipher in self.plugboard.wiring:
+                onecipher = self.plugboard.wiring.get(onecipher)
 
             onecipher = self.rotors[3].wiring[((pomlist.index(onecipher) + r3pos) % 26)]
             onecipher = pomlist[pomlist.index(onecipher)] #out - rotor3.ring  offset ringstellung
@@ -73,8 +72,8 @@ class Enigma():
             onecipher = pomlist[((pomlist.index(onecipher)-r3pos) % 26)]
 
 
-            if onecipher in self.plugboard.pairs:
-                onecipher = self.plugboard.pairs.get(onecipher)
+            if onecipher in self.plugboard.wiring:
+                onecipher = self.plugboard.wiring.get(onecipher)
             scrambled += onecipher
 
         return scrambled

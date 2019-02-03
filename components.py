@@ -1,4 +1,4 @@
-class Rotor():
+class Rotor:
     options = {
                      #ABCDEFGHIJKLMNOPQRSTUVWXYZ
             "I"    : "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
@@ -24,7 +24,7 @@ class Rotor():
             "VIII" : 13  #Z+M 13+26
             }
 
-    def __init__(self,walzen,ringstellung,grundstellung):
+    def __init__(self, walzen, ringstellung, grundstellung):
         self.number = walzen
         self.ring = ringstellung
         self.grund = grundstellung 
@@ -55,7 +55,7 @@ class Rotor():
             #print ("old wiring %s" % pom)
         return pom
         
-class Reflector():
+class Reflector:
     options = {
                   #ABCDEFGHIJKLMNOPQRSTUVWXYZ
             "B" : "YRUHQSLDPXNGOKMIEBFZCWVJAT",
@@ -64,19 +64,17 @@ class Reflector():
             "Ct": "RDOBJNTKVEHMLFCWZAXGYIPSUQ"
             }
 
-    def __init__(self,umkehrwalze):
+    def __init__(self, umkehrwalze):
         self.typ = umkehrwalze
         self.setting = self.options.get(umkehrwalze,"")
         
-class Plugboard():
-
-    def __init__(self,steckerbrett):
-        self.pairs = {}
-        self.pairs = self.setWiring(steckerbrett)
+class Plugboard:
+    def __init__(self, steckerbrett: dict):
+        self.wiring = self.setWiring(steckerbrett)
     
-    def setWiring(self,steckerbrett):
-        pom = {}
+    def setWiring(self, steckerbrett: dict):
+        wiring = {}
         for key,value in steckerbrett.items():
-            pom[key]=value
-            pom[value]=key
-        return pom
+            wiring[key]=value
+            wiring[value]=key
+        return wiring

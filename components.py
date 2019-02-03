@@ -1,4 +1,4 @@
-class rotor():
+class Rotor():
     options = {
                      #ABCDEFGHIJKLMNOPQRSTUVWXYZ
             "I"    : "EKMFLGDQVZNTOWYHXUSPAIBRCJ",
@@ -55,7 +55,7 @@ class rotor():
             #print ("old wiring %s" % pom)
         return pom
         
-class reflector():
+class Reflector():
     options = {
                   #ABCDEFGHIJKLMNOPQRSTUVWXYZ
             "B" : "YRUHQSLDPXNGOKMIEBFZCWVJAT",
@@ -68,7 +68,7 @@ class reflector():
         self.typ=umkehrwalze
         self.setting=self.options.get(umkehrwalze,"")
         
-class plugboard():
+class Plugboard():
 
     def __init__(self,steckerbrett):
         self.pairs = {}

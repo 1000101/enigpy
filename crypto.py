@@ -4,10 +4,10 @@ class Enigma():
 
     mapping = {c: ord(c) - 65 for c in pomlist}
 
-    def __init__(self, rotors: dict, reflectori, plugboardi):
+    def __init__(self, rotors: dict, reflector, plugboard):
         self.rotors = dict(rotors)  # create a new copy of rotors dict
-        self.reflector = reflectori
-        self.plugboard = plugboardi
+        self.reflector = reflector
+        self.plugboard = plugboard
         # self.mapping = dict((c, ord(c) - 65) for c in pomlist)
             
     def EDcrypt(self, text):

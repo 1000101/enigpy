@@ -14,14 +14,15 @@ class cracker():
 
     def decodeGrundStellung(self):
         #find out the starting grund stellung if we know the other parts
-        plugboardi = Plugboard({"B":"D","C":"O","E":"I","G":"L","J":"S","K":"T","N":"V","P":"M","Q":"R","W":"Z"})
-        reflectori = Reflector("B")
-        rotors = {
-            1: Rotor("VIII",19-1,pomlist.index(self.grundStellung[0])),  #slowest, left-most
-            2: Rotor("II",7-1,pomlist.index(self.grundStellung[1])),  #middle
-            3: Rotor("IV",12-1,pomlist.index(self.grundStellung[2])),  #fastest, right-most
-        }
-        enigmai = Enigma(rotors, reflectori, plugboardi)  
+        enigmai = Enigma(
+            rotors = {
+                1: Rotor("VIII",19-1,pomlist.index(self.grundStellung[0])),  #slowest, left-most
+                2: Rotor("II",7-1,pomlist.index(self.grundStellung[1])),  #middle
+                3: Rotor("IV",12-1,pomlist.index(self.grundStellung[2])),  #fastest, right-most
+            },
+            reflector = Reflector("B"),
+            plugboard = Plugboard({"B":"D","C":"O","E":"I","G":"L","J":"S","K":"T","N":"V","P":"M","Q":"R","W":"Z"})
+        )  
         text = enigmai.EDcrypt(self.grundStellung[3:])
 
         return text
@@ -29,18 +30,18 @@ class cracker():
     def test(self):
         #print (self.grundStellung)
         grunds = self.decodeGrundStellung()
-
-        plugboardi = Plugboard({"B":"D","C":"O","E":"I","G":"L","J":"S","K":"T","N":"V","P":"M","Q":"R","W":"Z"})
-        reflectori = Reflector("B")
-        rotors = {
-            1: Rotor("VIII",19-1,pomlist.index(grunds[0])),  #slowest, left-most
-            2: Rotor("II",7-1,pomlist.index(grunds[1])),  #middle
-            3: Rotor("IV",12-1,pomlist.index(grunds[2])),  #fastest, right-most
-        }
-        enigmai = Enigma(rotors, reflectori, plugboardi)    
+        enigmai = Enigma(
+            rotors = {
+                1: Rotor("VIII",19-1,pomlist.index(grunds[0])),  #slowest, left-most
+                2: Rotor("II",7-1,pomlist.index(grunds[1])),  #middle
+                3: Rotor("IV",12-1,pomlist.index(grunds[2])),  #fastest, right-most
+            },
+            reflector = Reflector("B"),
+            plugboard = Plugboard({"B":"D","C":"O","E":"I","G":"L","J":"S","K":"T","N":"V","P":"M","Q":"R","W":"Z"})
+        )    
         text = enigmai.EDcrypt(self.ttc)
         print ("DECRYPTED TEXT: "+text)
-        print ("STECKERS: {'B':'D','C':'O','E':'I','G':'L','J':'S','K':'T','N':'V','P':'M','Q':'R','W':'Z'}")  
+        print ("STECKERS: %s" % enigmai.plugboard.pairs)  
 
     def testHillClimb(self):
         #print ("testHillClimb")

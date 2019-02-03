@@ -454,10 +454,7 @@ class crackerParallel():
         steckertop=-2900
 
         for r in range(2):
-            if r == 0:
-                reflectori = reflector("B")
-            else:
-                reflectori = reflector("C")
+            reflectori = Reflector("B" if r == 0 else "C")
             for i in range(26):
                 for j in range(26):
                     for k in range(26):

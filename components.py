@@ -25,33 +25,33 @@ class Rotor():
             }
 
     def __init__(self,walzen,ringstellung,grundstellung):
-        self.number=walzen
-        self.ring=ringstellung
-        self.grund=grundstellung 
-        self.step=self.stepoptions.get(walzen,"")
-        self.wiring=self.options.get(walzen,"")
-        self.wiring=self.setWiring()
+        self.number = walzen
+        self.ring = ringstellung
+        self.grund = grundstellung 
+        self.step = self.stepoptions.get(walzen,"")
+        self.wiring = self.options.get(walzen,"")
+        self.wiring = self.setWiring()
         
     def setWiring(self):
-        if (self.ring>0):
-            pomlist="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            pom=""
-            index=0
+        if self.ring > 0:
+            pomlist = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            pom = ""
+            index = 0
             #put wires in the right spot
-            pom+=self.wiring[-self.ring:]
-            pom+=self.wiring[:26-self.ring]
-            self.wiring=pom
-            pom=""
+            pom += self.wiring[-self.ring:]
+            pom += self.wiring[:26-self.ring]
+            self.wiring = pom
+            pom = ""
             #adjust the letter + self.ring
             for letter in self.wiring:         
                 
-                pom+=pomlist[(pomlist.index(letter)+self.ring)%26]
+                pom += pomlist[(pomlist.index(letter)+self.ring)%26]
 
-                index+=1
+                index += 1
                 
             #print ("new wiring %s" % pom)
         else:
-            pom=self.wiring
+            pom = self.wiring
             #print ("old wiring %s" % pom)
         return pom
         
@@ -65,17 +65,17 @@ class Reflector():
             }
 
     def __init__(self,umkehrwalze):
-        self.typ=umkehrwalze
-        self.setting=self.options.get(umkehrwalze,"")
+        self.typ = umkehrwalze
+        self.setting = self.options.get(umkehrwalze,"")
         
 class Plugboard():
 
     def __init__(self,steckerbrett):
         self.pairs = {}
-        self.pairs=self.setWiring(steckerbrett)
+        self.pairs = self.setWiring(steckerbrett)
     
     def setWiring(self,steckerbrett):
-        pom={}
+        pom = {}
         for key,value in steckerbrett.items():
             pom[key]=value
             pom[value]=key

@@ -8,9 +8,9 @@ from time import time
 class cracker():
     
     def __init__(self,grundStellung,textToCrack,scorer):
-        self.grundStellung=grundStellung
-        self.ttc=textToCrack
-        self.scorer=scorer
+        self.grundStellung = grundStellung
+        self.ttc = textToCrack
+        self.scorer = scorer
 
     def decodeGrundStellung(self):
         #find out the starting grund stellung if we know the other parts
@@ -20,13 +20,13 @@ class cracker():
         rotor2 = Rotor("II",7-1,pomlist.index(self.grundStellung[1]))  #middle
         rotor3 = Rotor("IV",12-1,pomlist.index(self.grundStellung[2]))  #fastest, right-most
         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)  
-        text=enigmai.EDcrypt(self.grundStellung[3:])
+        text = enigmai.EDcrypt(self.grundStellung[3:])
 
         return text
 
     def test(self):
         #print (self.grundStellung)
-        grunds=self.decodeGrundStellung()
+        grunds = self.decodeGrundStellung()
 
         plugboardi = Plugboard({"B":"D","C":"O","E":"I","G":"L","J":"S","K":"T","N":"V","P":"M","Q":"R","W":"Z"})
         reflectori = Reflector("B")
@@ -34,7 +34,7 @@ class cracker():
         rotor2 = Rotor("II",7-1,pomlist.index(grunds[1]))  #middle
         rotor3 = Rotor("IV",12-1,pomlist.index(grunds[2]))  #fastest, right-most
         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)    
-        text=enigmai.EDcrypt(self.ttc)
+        text = enigmai.EDcrypt(self.ttc)
         print ("DECRYPTED TEXT: "+text)
         print ("STECKERS: {'B':'D','C':'O','E':'I','G':'L','J':'S','K':'T','N':'V','P':'M','Q':'R','W':'Z'}")  
 
@@ -49,18 +49,18 @@ class cracker():
         steckerscoreGRAM=-10000
         steckerscoreAIC=-10000
 
-        steckerinfo=[]
+        steckerinfo = []
         
-        plugsIC=4 #how many plugs we'd like to try to find in 1st run IC
-        plugsGRAM=6 #how many plugs we'd like to try to find in 2nd run trigram
-        plugs3=0 #how many plugs we'd like to try to find in 3rd run trigram
+        plugsIC = 4 #how many plugs we'd like to try to find in 1st run IC
+        plugsGRAM = 6 #how many plugs we'd like to try to find in 2nd run trigram
+        plugs3 = 0 #how many plugs we'd like to try to find in 3rd run trigram
 
         f = open("testHillClimb.txt", 'a')
-        start=datetime.now()
+        start = datetime.now()
         f.write("\n\nSTART: "+format(start, '%H:%M:%S')+"\n\n")
         f.flush()
 
-        grunds=self.decodeGrundStellung()
+        grunds = self.decodeGrundStellung()
         plugboardi = Plugboard({})
         reflectori = Reflector("B")
         rotor1 = Rotor("VIII",19-1,pomlist.index(grunds[0]))  #slowest, left-most
@@ -68,31 +68,31 @@ class cracker():
         rotor3 = Rotor("IV",12-1,pomlist.index(grunds[2]))  #fastest, right-most
         
         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)    
-        text=enigmai.EDcrypt(self.ttc)
+        text = enigmai.EDcrypt(self.ttc)
 
-        myic=self.scorer.icscore(text)
+        myic = self.scorer.icscore(text)
         print ("Original IC / plain text (before heuristics): "+str(myic))
         startTime = time()     
-        steckerscoreIC,steckerscoreGRAM,steckerscoreAIC,steckerinfo=self.steckerHillClimbTest(rotor1,rotor2,rotor3,reflectori,myic,plugsIC,plugsGRAM)
+        steckerscoreIC,steckerscoreGRAM,steckerscoreAIC,steckerinfo = self.steckerHillClimbTest(rotor1,rotor2,rotor3,reflectori,myic,plugsIC,plugsGRAM)
         print ("Execution time is: %.3fs" % (time()-startTime))
         print ("\nScores\n"+"Original IC:"+str(myic)+"\nAfterwards IC:"+str(steckerscoreAIC)+"\nTrigram:"+str(steckerscoreGRAM))
         print ("End of heuristics\n\n")
 
         print ("Heuristics results:")
-        if ((steckerscoreIC>bestoftherunIC and steckerscoreAIC>0.05) or (steckerscoreGRAM>bestoftherunGRAM and steckerscoreAIC>0.06)):
+        if ((steckerscoreIC > bestoftherunIC and steckerscoreAIC > 0.05) or (steckerscoreGRAM > bestoftherunGRAM and steckerscoreAIC > 0.06)):
                                                 #print ("CHECKTHISOUT: " +text+"\n")
-            bestoftherunIC=steckerscoreIC
-            bestoftherunGRAM=steckerscoreGRAM
+            bestoftherunIC = steckerscoreIC
+            bestoftherunGRAM = steckerscoreGRAM
             #print ("\nScores\n"+"Original IC:"+str(steckerscoreIC)+"\nAfterwards IC:"+str(steckerscoreAIC)+"\nTrigram:"+str(steckerscoreGRAM))
             #print (str(steckerinfo))
             #print ("TEXT: " +text+"\n")
 
-            if (steckerscoreAIC>0.065):                                         
+            if steckerscoreAIC > 0.065:                                         
                 print ("BINGO IC!!! "+str(steckerscoreAIC))
                 print ("BEST DESCRYPTED TEXT (IC METHOD): " +text+"\n")    
                 print ("STECKERS:"+str(steckerinfo))
 
-            if (steckerscoreGRAM>-1500):
+            if steckerscoreGRAM > -1500:
                 print ("BINGO GRAM!!! GRAM: "+str(steckerscoreGRAM)) # Trigram score
                 print ("BINGO GRAM!!! ORIC: "+str(myic))   # original IC score
                 print ("BINGO GRAM!!! BEIC: "+str(steckerscoreIC))   # IC score after first 4 plugs
@@ -112,11 +112,11 @@ class cracker():
         letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M",
                    "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
         bestpairscoreGRAM=-10000
-        topscore=score
-        bestpairscoreIC=score
+        topscore = score
+        bestpairscoreIC = score
 
         finalstecker=({})
-        best=["",""]
+        best = ["",""]
         best[0]=""
         best[1]=""
 
@@ -125,30 +125,30 @@ class cracker():
             #print (i)
             for firstletter in mostusedletters:
                 for secondletter in letters: #check every combination of the most used letters one by one
-                    if (secondletter != firstletter):
-                        plugboardtestpairs={firstletter:secondletter}
+                    if secondletter != firstletter:
+                        plugboardtestpairs = {firstletter:secondletter}
                         plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
                         plugboardtest = Plugboard(plugboardtestdict)
                         #print (plugboardtest.pairs)
                         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardtest)    
-                        text=enigmai.EDcrypt(self.ttc)
-                        myscore=self.scorer.icscore(text)
+                        text = enigmai.EDcrypt(self.ttc)
+                        myscore = self.scorer.icscore(text)
                         #print (myscore)
-                        if (myscore>bestpairscoreIC):
-                            bestpairscoreIC=myscore
-                            best=[firstletter,secondletter]
+                        if myscore > bestpairscoreIC:
+                            bestpairscoreIC = myscore
+                            best = [firstletter,secondletter]
                             #print ("Best one: "+str(bestpairscore)+" "+firstletter+secondletter)
             #print ("letas:"+str(letters))
             #print ("most:"+str(mostusedletters))
             #print (best[0])
             #print (best[1])
-            if (best[0] in letters):
+            if best[0] in letters:
                 letters.remove(best[0])
 
-            if (best[1] in letters):
+            if best[1] in letters:
                 letters.remove(best[1])
 
-            if (best[0] in mostusedletters):
+            if best[0] in mostusedletters:
                 mostusedletters.remove(best[0])
            
             plugboardi.pairs[best[0]]=best[1]
@@ -161,7 +161,7 @@ class cracker():
         if not plugboardi:
                 return bestpairscoreIC,bestpairscoreGRAM,dict(plugboardi.pairs)
 
-        if (bestpairscoreIC>score):
+        if bestpairscoreIC > score:
             # if we found something, we continue to hill-climb
 
             enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)  # initial trigram score
@@ -171,26 +171,26 @@ class cracker():
             for i in range(plugsGRAM):
                 for firstletter in mostusedletters2ndrun:
                     for secondletter in letters: #check every combination of the most used letters one by one
-                        if (secondletter != firstletter):
-                            plugboardtestpairs={firstletter:secondletter}
+                        if secondletter != firstletter:
+                            plugboardtestpairs = {firstletter:secondletter}
                             plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
                             plugboardtest = Plugboard(plugboardtestdict)
                             #print (plugboardtest.pairs)
                             enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardtest)    
-                            text=enigmai.EDcrypt(self.ttc)
-                            myscore=self.scorer.score(text)
+                            text = enigmai.EDcrypt(self.ttc)
+                            myscore = self.scorer.score(text)
                             #print (myscore)
-                            if (myscore>bestpairscoreGRAM):
-                                bestpairscoreGRAM=myscore
-                                best=[firstletter,secondletter]
+                            if myscore > bestpairscoreGRAM:
+                                bestpairscoreGRAM = myscore
+                                best = [firstletter,secondletter]
 
-            if (best[0] in letters):
+            if best[0] in letters:
                 letters.remove(best[0])
 
-            if (best[1] in letters):
+            if best[1] in letters:
                 letters.remove(best[1])
 
-            if (best[0] in mostusedletters2ndrun):
+            if best[0] in mostusedletters2ndrun:
                 mostusedletters2ndrun.remove(best[0])
            
             plugboardi.pairs[best[0]]=best[1]
@@ -202,8 +202,8 @@ class cracker():
 
         # IC calculation after the 2nd step of hill climb
         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)    
-        text=enigmai.EDcrypt(self.ttc)
-        afterwardsIC=self.scorer.icscore(text)
+        text = enigmai.EDcrypt(self.ttc)
+        afterwardsIC = self.scorer.icscore(text)
 
         return bestpairscoreIC,bestpairscoreGRAM,afterwardsIC,dict(plugboardi.pairs)
 
@@ -217,8 +217,8 @@ class cracker():
         letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M",
                    "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
         
-        topscore=score
-        bestpairscore=score
+        topscore = score
+        bestpairscore = score
         finalstecker=({})
 
         #print ("Top score: "+str(topscore))
@@ -226,19 +226,19 @@ class cracker():
             #print (i)
             for firstletter in mostusedletters:
                 for secondletter in letters: #check every combination of the most used letters one by one
-                    if (secondletter != firstletter):
-                        #plugboardtest=dict(plugboardi.pairs)
-                        plugboardtestpairs={firstletter:secondletter}
+                    if secondletter != firstletter:
+                        #plugboardtest = dict(plugboardi.pairs)
+                        plugboardtestpairs = {firstletter:secondletter}
                         plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
                         plugboardtest = Plugboard(plugboardtestdict)
                         #print (plugboardtest)
                         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardtest)    
-                        text=enigmai.EDcrypt(self.ttc)
-                        myscore=self.scorer.icscore(text)
+                        text = enigmai.EDcrypt(self.ttc)
+                        myscore = self.scorer.icscore(text)
 
-                        if (myscore>bestpairscore):
-                            bestpairscore=myscore
-                            best=[firstletter,secondletter]
+                        if myscore > bestpairscore:
+                            bestpairscore = myscore
+                            best = [firstletter,secondletter]
                             #print ("Best one: "+str(bestpairscore)+" "+firstletter+secondletter)
             #print (best[0])
             #print (best[1])
@@ -257,10 +257,10 @@ class cracker():
 class crackerParallel():
     
     def __init__(self,textToCrack,scorer,subset,q):
-        self.ttc=textToCrack
-        self.subset=subset
-        self.q=q
-        self.scorer=scorer
+        self.ttc = textToCrack
+        self.subset = subset
+        self.q = q
+        self.scorer = scorer
 
     def steckerHillClimbTest(self,rotor1,rotor2,rotor3,reflectori,score,plugsIC,plugsGRAM):
         plugboardi = Plugboard({})
@@ -272,11 +272,11 @@ class crackerParallel():
         letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M",
                    "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
         bestpairscoreGRAM=-10000
-        topscore=score
-        bestpairscoreIC=score
+        topscore = score
+        bestpairscoreIC = score
 
         finalstecker=({})
-        best=["",""]
+        best = ["",""]
         best[0]=""
         best[1]=""
 
@@ -285,31 +285,31 @@ class crackerParallel():
             #print (i)
             for firstletter in mostusedletters:
                 for secondletter in letters: #check every combination of the most used letters one by one
-                    if (secondletter != firstletter):
-                        #plugboardtest=dict(plugboardi.pairs)
-                        plugboardtestpairs={firstletter:secondletter}
+                    if secondletter != firstletter:
+                        #plugboardtest = dict(plugboardi.pairs)
+                        plugboardtestpairs = {firstletter:secondletter}
                         plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
                         plugboardtest = Plugboard(plugboardtestdict)
                         #print (plugboardtest.pairs)
                         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardtest)    
-                        text=enigmai.EDcrypt(self.ttc)
-                        myscore=self.scorer.icscore(text)
+                        text = enigmai.EDcrypt(self.ttc)
+                        myscore = self.scorer.icscore(text)
                         #print (myscore)
-                        if (myscore>bestpairscoreIC):
-                            bestpairscoreIC=myscore
-                            best=[firstletter,secondletter]
+                        if myscore > bestpairscoreIC:
+                            bestpairscoreIC = myscore
+                            best = [firstletter,secondletter]
                             #print ("Best one: "+str(bestpairscore)+" "+firstletter+secondletter)
             #print ("letas:"+str(letters))
             #print ("most:"+str(mostusedletters))
             #print (best[0])
             #print (best[1])
-            if (best[0] in letters):
+            if best[0] in letters:
                 letters.remove(best[0])
 
-            if (best[1] in letters):
+            if best[1] in letters:
                 letters.remove(best[1])
 
-            if (best[0] in mostusedletters):
+            if best[0] in mostusedletters:
                 mostusedletters.remove(best[0])
            
             plugboardi.pairs[best[0]]=best[1]
@@ -322,7 +322,7 @@ class crackerParallel():
         if not plugboardi:
                 return bestpairscoreIC,bestpairscoreGRAM,dict(plugboardi.pairs)
 
-        if (plugsGRAM>0):
+        if plugsGRAM > 0:
             # if we found something, we continue to hill-climb
 
             enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)  # initial trigram score
@@ -333,26 +333,26 @@ class crackerParallel():
             for i in range(plugsGRAM):
                 for firstletter in mostusedletters2ndrun:
                     for secondletter in letters: #check every combination of the most used letters one by one
-                        if (secondletter != firstletter):
-                            plugboardtestpairs={firstletter:secondletter}
+                        if secondletter != firstletter:
+                            plugboardtestpairs = {firstletter:secondletter}
                             plugboardtestdict = dict(plugboardtestpairs, **plugboardi.pairs)
                             plugboardtest = Plugboard(plugboardtestdict)
                             #print (plugboardtest.pairs)
                             enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardtest)    
-                            text=enigmai.EDcrypt(self.ttc)
-                            myscore=self.scorer.score(text)
+                            text = enigmai.EDcrypt(self.ttc)
+                            myscore = self.scorer.score(text)
                             #print (myscore)
-                            if (myscore>bestpairscoreGRAM):
-                                bestpairscoreGRAM=myscore
-                                best=[firstletter,secondletter]
+                            if myscore > bestpairscoreGRAM:
+                                bestpairscoreGRAM = myscore
+                                best = [firstletter,secondletter]
 
-            if (best[0] in letters):
+            if best[0] in letters:
                 letters.remove(best[0])
 
-            if (best[1] in letters):
+            if best[1] in letters:
                 letters.remove(best[1])
 
-            if (best[0] in mostusedletters2ndrun):
+            if best[0] in mostusedletters2ndrun:
                 mostusedletters2ndrun.remove(best[0])
            
             plugboardi.pairs[best[0]]=best[1]
@@ -364,8 +364,8 @@ class crackerParallel():
 
         # IC calculation after the 2nd step of hill climb
         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)    
-        text=enigmai.EDcrypt(self.ttc)
-        afterwardsIC=self.scorer.icscore(text)
+        text = enigmai.EDcrypt(self.ttc)
+        afterwardsIC = self.scorer.icscore(text)
 
         return bestpairscoreIC,bestpairscoreGRAM,afterwardsIC,dict(plugboardi.pairs)
 
@@ -423,11 +423,11 @@ class crackerParallel():
 
     def ultimate_MP_method_1(self): 
         #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC
-        strtowrite="!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2]     
+        strtowrite = "!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2]     
         self.q.put(strtowrite)
-        messagelenght=len(self.ttc)
-        ic=0.04 #threshold, everything less than this won't be even evaluated further
-        topic=ic
+        messagelenght = len(self.ttc)
+        ic = 0.04 #threshold, everything less than this won't be even evaluated further
+        topic = ic
 
         plugs1run = 4               #number of plugs to be indentified by IC
         plugs2run = 10-plugs1run    #rest of the plugs, identified by trigram score
@@ -436,31 +436,31 @@ class crackerParallel():
         bestoftherunIC=-10000
         bestoftherunGRAM=-10000
         myscore=-10000
-        botrstring=""
+        botrstring = ""
 
         #-1725 bi1941 #-2900 tri #-4300 quad
         steckertop=-2900
 
         for r in range(2):
-            if r==0:
-                reflectori=reflector("B")
+            if r == 0:
+                reflectori = reflector("B")
             else:
-                reflectori=reflector("C")
+                reflectori = reflector("C")
             for i in range(26):
                 for j in range(26):
                     for k in range(26):
-                        rotor1=rotor(self.subset[0],0,i)  #slowest, left-most
-                        rotor2=rotor(self.subset[1],0,j)  #middle
-                        rotor3=rotor(self.subset[2],0,k)  #fastest, right-most
+                        rotor1 = rotor(self.subset[0],0,i)  #slowest, left-most
+                        rotor2 = rotor(self.subset[1],0,j)  #middle
+                        rotor3 = rotor(self.subset[2],0,k)  #fastest, right-most
                         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)    
-                        text=enigmai.EDcrypt(self.ttc)
-                        myic=self.scorer.icscore(text)
-                        #myscore=self.scorer_mono.score(text) #in case we'd need monograms (but we don't at this moment)
+                        text = enigmai.EDcrypt(self.ttc)
+                        myic = self.scorer.icscore(text)
+                        #myscore = self.scorer_mono.score(text) #in case we'd need monograms (but we don't at this moment)
                         
-                        if (myic>ic):
-                            topic=myic
+                        if myic > ic:
+                            topic = myic
                             '''
-                            strtowrite=""+format(datetime.now(), '%H:%M:%S')\
+                            strtowrite = ""+format(datetime.now(), '%H:%M:%S')\
                             +"\n 1st step Score\n"+str(myic)+"\nGuess: "+text\
                             +"\nGrunds original: "+str(i)+":"+str(j)+":"+str(k)\
                             +" Ring3: "+str("0")+" Wheels: "\
@@ -472,28 +472,28 @@ class crackerParallel():
                             #2nd step is to test right-most and middle rotor combinations for the best scored ones
                             for x in range(26):
                                 for y in range(26):
-                                        #r3shift=0+y
-                                        #r2shift=0
-                                        #if (rotor2.step>=r3shift):
-                                        #    r2shift=1
+                                        #r3shift = 0+y
+                                        #r2shift = 0
+                                        #if rotor2.step>=r3shift:
+                                        #    r2shift = 1
 
-                                        #rotor1=rotor(self.subset[0],0,i)
-                                        #rotor2=rotor(self.subset[1],x,(abs(j-r2shift-x)%26))
-                                        #rotor3=rotor(self.subset[2],y,((k+r3shift)%26))
-                                        rotor1=rotor(self.subset[0],0,i)
-                                        rotor2=rotor(self.subset[1],x,j)
-                                        rotor3=rotor(self.subset[2],y,k)
+                                        #rotor1 = rotor(self.subset[0],0,i)
+                                        #rotor2 = rotor(self.subset[1],x,(abs(j-r2shift-x)%26))
+                                        #rotor3 = rotor(self.subset[2],y,((k+r3shift)%26))
+                                        rotor1 = rotor(self.subset[0],0,i)
+                                        rotor2 = rotor(self.subset[1],x,j)
+                                        rotor3 = rotor(self.subset[2],y,k)
                                         enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardi)
-                                        text=enigmai.EDcrypt(self.ttc)
+                                        text = enigmai.EDcrypt(self.ttc)
 
-                                        myic=self.scorer.icscore(text)
+                                        myic = self.scorer.icscore(text)
 
                                         #3rd step is Hill-climbing steckers using trigrams
-                                        if (myic>topic and myic>0.040):
-                                            topic=myic
+                                        if myic > topic and myic > 0.040:
+                                            topic = myic
 
                                             '''
-                                            strtowrite=""+format(datetime.now(), '%H:%M:%S')\
+                                            strtowrite = ""+format(datetime.now(), '%H:%M:%S')\
                                             +"\n2nd step Score\n"+str(myic)+"\nGuess: "+text\
                                             +"\nGrunds original: "+str(i)+":"+str(j)+":"+str(k)\
                                             +" Ring2: "+str(x)+ " Ring3: "+str(y)+" Wheels: "\
@@ -501,10 +501,10 @@ class crackerParallel():
                                             +" Ref:"+str(reflectori.typ)+"\n"
                                             self.q.put(strtowrite)
                                             '''
-                                            #bestoftherunIC=topscore #nope
+                                            #bestoftherunIC = topscore #nope
                                             #stecker
                                            
-                                            '''strtowrite=""+format(datetime.now(), '%H:%M:%S')
+                                            '''strtowrite = ""+format(datetime.now(), '%H:%M:%S')
                                             +"\nORIGINAL Score\n"+str(myscore)+"\nGuess: "
                                             +text+"\nGrunds original: "+str(i)+":"+str(j)+":"+str(k)
                                             +" Grunds new: "+str(i)+":"
@@ -514,20 +514,20 @@ class crackerParallel():
                                             +" Ref:"+str(reflectori.typ)+"\n"
                                             #self.q.put(strtowrite)
                                             '''
-                                            #myscore=self.scorer.score(text)
-                                            steckerscoreIC,steckerscoreGRAM,steckerscoreAIC,steckerinfo=self.steckerHillClimbTest(rotor1,
+                                            #myscore = self.scorer.score(text)
+                                            steckerscoreIC,steckerscoreGRAM,steckerscoreAIC,steckerinfo = self.steckerHillClimbTest(rotor1,
                                                                                            rotor2,
                                                                                            rotor3,
                                                                                            reflectori,
                                                                                            myic,plugs1run,plugs2run)
 
-                                            #strtowrite="STECKER: "+str(steckerinfo)+"\n\n"
+                                            #strtowrite = "STECKER: "+str(steckerinfo)+"\n\n"
                                             #self.q.put(strtowrite)
-                                            if ((steckerscoreIC>bestoftherunIC and steckerscoreAIC>0.06) or (steckerscoreGRAM>bestoftherunGRAM and steckerscoreAIC>0.06)):
+                                            if ((steckerscoreIC > bestoftherunIC and steckerscoreAIC > 0.06) or (steckerscoreGRAM > bestoftherunGRAM and steckerscoreAIC > 0.06)):
                                                 #print ("CHECKTHISOUT: " +text+"\n")
-                                                bestoftherunIC=steckerscoreIC
-                                                bestoftherunGRAM=steckerscoreGRAM
-                                                strtowrite="Time "\
+                                                bestoftherunIC = steckerscoreIC
+                                                bestoftherunGRAM = steckerscoreGRAM
+                                                strtowrite = "Time "\
                                                 +format(datetime.now(), '%H:%M:%S')\
                                                 +"\nORIGINAL Score\n"+str(myic)\
                                                 +"\nScores\n"+"Original IC:"+str(steckerscoreIC)+"\nAfterwards IC:"+str(steckerscoreAIC)+"\nTrigram:"+str(steckerscoreGRAM)\
@@ -539,11 +539,11 @@ class crackerParallel():
                                                 +"STECKER: "+str(steckerinfo)+"\n\n"
                                                 self.q.put(strtowrite)
 
-                                            if (steckerscoreAIC>0.065):                                         
+                                            if steckerscoreAIC > 0.065:                                         
                                                 print ("BINGO IC!!! "+str(steckerscoreAIC))
                                                 print ("CHECKTHISOUT: " +text+"\n")
 
-                                            if (steckerscoreGRAM>-2900):
+                                            if steckerscoreGRAM > -2900:
                                                 print ("CHECKTHISOUT: " +text+"\n")
                                                 print ("BINGO GRAM!!! GRAM:"+str(steckerscoreGRAM)) # Trigram score
                                                 print ("BINGO GRAM!!! ORIC:"+str(myic))   # original IC score
@@ -553,9 +553,9 @@ class crackerParallel():
                                             #stecker
 
                                                 
-        if (bestoftherunIC > -10000):
-            strtowrite="BOTR: "+str(bestoftherunIC)+"\n"+str(botrstring)
-        strtowrite=""
+        if bestoftherunIC > -10000:
+            strtowrite = "BOTR: "+str(bestoftherunIC)+"\n"+str(botrstring)
+        strtowrite = ""
         self.q.put(strtowrite)                                                            
                                                         
     def steckerHillClimb(self,rotor1,rotor2,rotor3,reflectori,score):
@@ -577,27 +577,27 @@ class crackerParallel():
 
         #list(itertools.product(mostusedletters, letters))
         #letters.remove("")
-        steckerinfo=[]
-        lettersToRemove=[]
-        topscore=score
+        steckerinfo = []
+        lettersToRemove = []
+        topscore = score
         #allcombs = itertools.combinations(letters, 2)
         for i in range(10):
             lettersToRemove[:] = []
             plugboardtestpairs = {}
             #for sub in (itertools.combinations(letters, 2)): #all letters
             for sub in (itertools.product(mostusedletters, letters)):
-                plugboardtestpairs=dict(plugboardi.pairs)
+                plugboardtestpairs = dict(plugboardi.pairs)
                 plugboardtestpairs[sub[0]]=sub[1]
                 plugboardtest = Plugboard(plugboardtestpairs)
                 enigmai = Enigma(rotor1, rotor2, rotor3, reflectori, plugboardtest)    
-                text=enigmai.EDcrypt(self.ttc)
-                myscore=self.scorer.score(text)
+                text = enigmai.EDcrypt(self.ttc)
+                myscore = self.scorer.score(text)
                 print (self.scorer.icscore(text))
                 
-                if (myscore>topscore):
-                    topscore=myscore
-                    lettersToRemove=[sub[0],sub[1]]
-            if (lettersToRemove):
+                if myscore > topscore:
+                    topscore = myscore
+                    lettersToRemove = [sub[0],sub[1]]
+            if lettersToRemove:
                 letters.remove(lettersToRemove[0])
                 letters.remove(lettersToRemove[1])
                 plugboardi.pairs[lettersToRemove[0]]=lettersToRemove[1]
@@ -606,32 +606,32 @@ class crackerParallel():
 
 def final(subset,q):
     #insert the scrambled text 547 char long
-    scrambled="KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
-    #scorer_mono=ngram_score('grams/german_monograms.txt')
-    #scorer_bi=ngram_score('grams/german_bigrams.txt')
-    scorer_tri=ngram_score('grams/german_trigrams1941.txt')
-    #scorer_quad=ngram_score('grams/german_quadgrams.txt')
-    scorer=scorer_tri
+    scrambled = "KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
+    #scorer_mono = ngram_score('grams/german_monograms.txt')
+    #scorer_bi = ngram_score('grams/german_bigrams.txt')
+    scorer_tri = ngram_score('grams/german_trigrams1941.txt')
+    #scorer_quad = ngram_score('grams/german_quadgrams.txt')
+    scorer = scorer_tri
 
-    crackerF=crackerParallel(scrambled,scorer,subset,q)
+    crackerF = crackerParallel(scrambled,scorer,subset,q)
     crackerF.ultimate_MP_method_1()
 
 def simpleTest(grundstellung,scrambledtext):
    
     print ("---------- simple test - Right decryption: ----------------")
-    scorer_tri=ngram_score('grams/german_trigrams1941.txt')
-    scorer=scorer_tri
-    crackerTest=cracker(grundstellung,scrambledtext,scorer)
+    scorer_tri = ngram_score('grams/german_trigrams1941.txt')
+    scorer = scorer_tri
+    crackerTest = cracker(grundstellung,scrambledtext,scorer)
     crackerTest.test()
     print ("-----------------------------------------------------------")
     print ("")
 
 def hillTest(grundstellung,scrambledtext):
     print ("-------- hill test - work in progress heuristics: ---------")
-    #scrambled="KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
-    scorer_tri=ngram_score('grams/german_trigrams1941.txt')
-    scorer=scorer_tri
-    crackerTest=cracker(grundstellung,scrambledtext,scorer)
+    #scrambled = "KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
+    scorer_tri = ngram_score('grams/german_trigrams1941.txt')
+    scorer = scorer_tri
+    crackerTest = cracker(grundstellung,scrambledtext,scorer)
     crackerTest.testHillClimb()
     print ("-----------------------------------------------------------")
 

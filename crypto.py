@@ -1,4 +1,5 @@
 from string import ascii_uppercase as pomlist
+from json import dumps as json_dumps
 
 class Enigma:
     mapping = {c: ord(c) - 65 for c in pomlist}
@@ -8,6 +9,13 @@ class Enigma:
         self.reflector = reflector
         self.plugboard = plugboard
         # self.mapping = dict((c, ord(c) - 65) for c in pomlist)
+
+    def __str__(self):
+        rotors = ''
+        for i, rotor in self.rotors.items():
+            rotors += '%d. %s\n' % (i, rotor)
+        sep = '#' * 85
+        return '%s\nEnigma:\n%s\n%s\n\n%s\n%s' % (sep, rotors, self.reflector, self.plugboard, sep)
             
     def EDcrypt(self, text):
         r1pos = self.rotors[1].grund

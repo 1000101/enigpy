@@ -1,3 +1,5 @@
+from json import dumps as json_dumps
+
 class Rotor:
     options = {
                      #ABCDEFGHIJKLMNOPQRSTUVWXYZ
@@ -54,6 +56,9 @@ class Rotor:
             pom = self.wiring
             #print ("old wiring %s" % pom)
         return pom
+
+    def __repr__(self):
+        return 'Rotor %s, ring: %s, grund: %s, step: %s, wiring: %s' % (self.number, self.ring, self.grund, self.step, json_dumps(self.wiring, indent=4, sort_keys=True))
         
 class Reflector:
     options = {
@@ -67,6 +72,9 @@ class Reflector:
     def __init__(self, umkehrwalze):
         self.typ = umkehrwalze
         self.setting = self.options.get(umkehrwalze,"")
+
+    def __repr__(self):
+        return 'Reflector %s: %s' % (self.typ, self.setting)
         
 class Plugboard:
     def __init__(self, steckerbrett: dict):
@@ -78,3 +86,6 @@ class Plugboard:
             wiring[key]=value
             wiring[value]=key
         return wiring
+
+    def __repr__(self):
+        return 'Plugboard: %s' % json_dumps(self.wiring, indent=4, sort_keys=True)

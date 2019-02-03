@@ -75,6 +75,7 @@ class cracker():
             3: Rotor("IV",12-1, pomlist.index(grunds[2])),  #fastest, right-most
         }
         enigmai = Enigma(rotors, reflectori, plugboardi)    
+        print(enigmai)
         text = enigmai.EDcrypt(self.ttc)
 
         myic = self.scorer.icscore(text)

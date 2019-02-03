@@ -45,14 +45,14 @@ class cracker():
 
     def testHillClimb(self):
         #print ("testHillClimb")
-        bestoftherun=-10000
-        bestoftherunIC=-10000
-        bestoftherunGRAM=-10000
-        myscore=-10000
+        bestoftherun = -10000
+        bestoftherunIC = -10000
+        bestoftherunGRAM = -10000
+        myscore = -10000
 
-        steckerscoreIC=-10000
-        steckerscoreGRAM=-10000
-        steckerscoreAIC=-10000
+        steckerscoreIC = -10000
+        steckerscoreGRAM = -10000
+        steckerscoreAIC = -10000
 
         steckerinfo = []
         
@@ -115,7 +115,7 @@ class cracker():
         mostusedletters = ["E","N","X","R"] # we will use 4 most used letters for the 1st run using IC
         mostusedletters2ndrun = list("STAHDULCGMOBWFKZVPJYQ") #2nd run for trigrams
         letters = list(pomlist)
-        bestpairscoreGRAM=-10000
+        bestpairscoreGRAM = -10000
         topscore = score
         bestpairscoreIC = score
 
@@ -279,7 +279,7 @@ class crackerParallel():
         mostusedletters = ["E","N","X","R"] # we will use 4 most used letters for the 1st run using IC
         mostusedletters2ndrun = list("STAHDULCGMOBWFKZVPJYQ") #2nd run for trigrams
         letters = list(pomlist)
-        bestpairscoreGRAM=-10000
+        bestpairscoreGRAM = -10000
         topscore = score
         bestpairscoreIC = score
 
@@ -440,13 +440,13 @@ class crackerParallel():
         plugs2run = 10-plugs1run    #rest of the plugs, identified by trigram score
 
         plugboardi = Plugboard({})
-        bestoftherunIC=-10000
-        bestoftherunGRAM=-10000
-        myscore=-10000
+        bestoftherunIC = -10000
+        bestoftherunGRAM = -10000
+        myscore = -10000
         botrstring = ""
 
         #-1725 bi1941 #-2900 tri #-4300 quad
-        steckertop=-2900
+        steckertop = -2900
 
         for r in range(2):
             reflectori = Reflector("B" if r == 0 else "C")

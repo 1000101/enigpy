@@ -226,8 +226,7 @@ class cracker():
 
         # we'll try to hill-climb just the most used pairs
         mostusedletters = ["E","N","X","R"] # we will use 4 most used letters for the 1st run using IC
-        letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M",
-                   "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+        letters = list(pomlist)
         
         topscore = score
         bestpairscore = score
@@ -278,10 +277,8 @@ class crackerParallel():
 
         # we'll try to hill-climb just the most used pairs
         mostusedletters = ["E","N","X","R"] # we will use 4 most used letters for the 1st run using IC
-        mostusedletters2ndrun = ["S","T","A","H","D","U","L","C","G","M",
-                                 "O","B","W","F","K","Z","V","P","J","Y","Q"] #2nd run for trigrams
-        letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M",
-                   "N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+        mostusedletters2ndrun = list("STAHDULCGMOBWFKZVPJYQ") #2nd run for trigrams
+        letters = list(pomlist)
         bestpairscoreGRAM=-10000
         topscore = score
         bestpairscoreIC = score

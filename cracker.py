@@ -4,6 +4,7 @@ from scorers import ngram_score
 from datetime import datetime
 from string import ascii_uppercase as pomlist
 from time import time
+from decimal import Decimal
 
 class cracker():
     
@@ -176,7 +177,7 @@ class cracker():
 
             enigmai = Enigma(rotors, reflectori, plugboardi)  # initial trigram score
             text = enigmai.EDcrypt(self.ttc)
-            bestpairscoreGRAM = self.scorer.score(text)
+            bestpairscoreGRAM = Decimal(self.scorer.score(text))
 
             for i in range(plugsGRAM):
                 for firstletter in mostusedletters2ndrun:
@@ -188,13 +189,10 @@ class cracker():
                             #print (plugboardtest.wiring)
                             enigmai = Enigma(rotors, reflectori, plugboardtest)    
                             text = enigmai.EDcrypt(self.ttc)
-                            myscore = self.scorer.score(text)
-                            #print (myscore)
+                            myscore = Decimal(self.scorer.score(text))
                             if myscore > bestpairscoreGRAM:
                                 bestpairscoreGRAM = myscore
                                 best = [firstletter, secondletter]
-
-            print('Finished in %.2f seconds.' % (time() - start))
 
             if best[0] in letters:
                 letters.remove(best[0])

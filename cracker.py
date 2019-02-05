@@ -44,6 +44,12 @@ class cracker():
         print ("DECRYPTED TEXT: "+text)
         print ("STECKERS: %s" % enigmai.plugboard.wiring)  
 
+
+    # Well, hill-climb is not easy... todo:
+    # 1st run - try letter combinations of letter with highest frequency!
+    # 
+    #
+
     def testHillClimb(self):
         #print ("testHillClimb")
         bestoftherun = -10000
@@ -421,10 +427,11 @@ class crackerParallel():
 # 1st step: precompute all possible combinations 27 418 560 (54 837 120 with 2 types of reflector)
 # 2nd step: Hill-climb using same technique as in method #1
 #
-#Index of Coincidence (IC):
-#Random text, that is where all letters are present with nearly the same frequency, will have an IC 
-#‘score’ of 1/26 or 0.03846. If we measure the IC score of plain Enigma text it can be up to around 
-#0.05 to 0.07, depending on the actual frequencies of the letters in the plain message. German IC = 0.0762
+# Index of Coincidence (IC):
+# Random text, that is where all letters are present with nearly the same frequency, will have an IC 
+# ‘score’ of 1/26 or 0.03846. If we measure the IC score of plain Enigma text it can be up to around 
+# 0.05 to 0.07, depending on the actual frequencies of the letters in the plain message.
+# German IC = 0.0762 German WWII IC = 0.061
 #
 
     def ultimate_MP_method_1(self): 

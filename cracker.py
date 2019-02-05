@@ -48,7 +48,10 @@ class cracker():
     # Well, hill-climb is not easy... todo:
     # 1st run - try letter combinations of letter with highest frequency!
     # 
-    #
+    # Some more thoughts:
+    # Wermacht decided to use 10 out of 13 (2x13=26) possible plugs. 
+    # This means that an empty plugboard already holds 6 correct letters
+    # 
 
     def testHillClimb(self):
         #print ("testHillClimb")
@@ -389,9 +392,9 @@ class crackerParallel():
 # Combinations: 2 109 120
 # 2nd step: brute force fastest (3rd) and middle (2nd) ring settings (26^2) using IC.
 # Combinations: 676
-# 3rd step: Hill-climb first 4 steckers using IC.
+# 3rd step: Hill-climb first 3 steckers using IC,
 # Combinations: 150 738 274 937 250 [26!/(6!*10!*2^10)] = not feasible to brute force.
-# 4th step: Hill-climb steckers using trigrams (possibly bigrams/quadgrams).
+# 4th step: Hill-climb next steckers using bigrams and then trigrams (possibly quadgrams).
 # Combinations: 150 738 274 937 250 [26!/(6!*10!*2^10)] = not feasible to brute force.
 #
 # Steckers (when X steckers are connected):

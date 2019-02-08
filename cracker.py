@@ -5,6 +5,7 @@ from datetime import datetime
 from string import ascii_uppercase as pomlist
 from time import time
 from decimal import Decimal
+import collections
 
 class cracker():
     
@@ -121,8 +122,17 @@ class cracker():
 
     def steckerHillClimbTest(self, rotors, reflectori, score, plugsIC, plugsGRAM):
         plugboardi = Plugboard({})
+        
+        
+        # we'll try to hill-climb the first 3 most frequent letters using IC
+        # mostusedletters = ["E","N","X","R"] # we will use 4 most used letters for the 1st run using IC
+        frequencyAnalysis=collections.Counter(self.ttc)
+        print (frequencyAnalysis)
+        print (frequencyAnalysis.most_common(3))
+        mostCommon3=frequencyAnalysis.most_common(3)
+        input("Press Enter to continue...")
 
-        # we'll try to hill-climb just the most used pairs
+
         mostusedletters = ["E","N","X","R"] # we will use 4 most used letters for the 1st run using IC
         mostusedletters2ndrun = list("STAHDULCGMOBWFKZVPJYQ") #2nd run for trigrams
         letters = list(pomlist)
@@ -139,10 +149,11 @@ class cracker():
         #print ("Top score: "+str(topscore))
         for i in range(plugsIC):  #find the first best pair out of most used letters
             #print (i)
-            for firstletter in mostusedletters:
+            for firstletter,value in mostCommon3:
                 for secondletter in letters: #check every combination of the most used letters one by one
                     if secondletter != firstletter:
                         plugboardtestpairs = {firstletter:secondletter}
+                        print (firstletter)
                         plugboardtestdict = dict(plugboardtestpairs, **plugboardi.wiring)
                         plugboardtest = Plugboard(plugboardtestdict)
                         #print (plugboardtest.wiring)
@@ -226,49 +237,6 @@ class cracker():
         afterwardsIC = self.scorer.icscore(text)
 
         return bestpairscoreIC, bestpairscoreGRAM, afterwardsIC, dict(plugboardi.wiring)
-
-    
-
-    def steckerHillClimbTest2(self, rotors, reflectori, score, plugs1, plugs2, plugs3):
-        plugboardi = Plugboard({})
-
-        # we'll try to hill-climb just the most used pairs
-        mostusedletters = ["E","N","X","R"] # we will use 4 most used letters for the 1st run using IC
-        letters = list(pomlist)
-        
-        topscore = score
-        bestpairscore = score
-
-        #print ("Top score: "+str(topscore))
-        for i in range(plugs1):  #find the first best pair out of most used letters
-            #print (i)
-            for firstletter in mostusedletters:
-                for secondletter in letters: #check every combination of the most used letters one by one
-                    if secondletter != firstletter:
-                        #plugboardtest = dict(plugboardi.wiring)
-                        plugboardtestpairs = {firstletter:secondletter}
-                        plugboardtestdict = dict(plugboardtestpairs, **plugboardi.wiring)
-                        plugboardtest = Plugboard(plugboardtestdict)
-                        #print (plugboardtest)
-                        enigmai = Enigma(rotors, reflectori, plugboardtest)    
-                        text = enigmai.EDcrypt(self.ttc)
-                        myscore = self.scorer.icscore(text)
-
-                        if myscore > bestpairscore:
-                            bestpairscore = myscore
-                            best = [firstletter, secondletter]
-                            #print ("Best one: "+str(bestpairscore)+" "+firstletter+secondletter)
-            #print (best[0])
-            #print (best[1])
-            letters.remove(best[0])
-            letters.remove(best[1])
-            mostusedletters.remove(best[0])
-            plugboardi.wiring[best[0]] = best[1]
-            best[0] = ""
-            best[1] = ""
-
-        return bestpairscore, plugboardi
-    
 
 
 #cracker suitable for parallel computation
@@ -540,7 +508,7 @@ class crackerParallel():
 
                                             #strtowrite = "STECKER: "+str(steckerinfo)+"\n\n"
                                             #self.q.put(strtowrite)
-                                            if ((steckerscoreIC > bestoftherunIC and steckerscoreAIC > 0.06) or (steckerscoreGRAM > bestoftherunGRAM and steckerscoreAIC > 0.06)):
+                                            if ((steckerscoreIC > bestoftherunIC and steckerscoreAIC > 0.055) or (steckerscoreGRAM > bestoftherunGRAM and steckerscoreAIC > 0.055)):
                                                 #print ("CHECKTHISOUT: " +text+"\n")
                                                 bestoftherunIC = steckerscoreIC
                                                 bestoftherunGRAM = steckerscoreGRAM
@@ -556,7 +524,7 @@ class crackerParallel():
                                                 +"STECKER: "+str(steckerinfo)+"\n\n"
                                                 self.q.put(strtowrite)
 
-                                            if steckerscoreAIC > 0.065:                                         
+                                            if steckerscoreAIC > 0.06:                                         
                                                 print ("BINGO IC!!! "+str(steckerscoreAIC))
                                                 print ("CHECKTHISOUT: " +text+"\n")
 
@@ -564,7 +532,7 @@ class crackerParallel():
                                                 print ("CHECKTHISOUT: " +text+"\n")
                                                 print ("BINGO GRAM!!! GRAM:"+str(steckerscoreGRAM)) # Trigram score
                                                 print ("BINGO GRAM!!! ORIC:"+str(myic))   # original IC score
-                                                print ("BINGO GRAM!!! BEIC:"+str(steckerscoreIC))   # IC score after first 4 plugs
+                                                print ("BINGO GRAM!!! BEIC:"+str(steckerscoreIC))   # IC score after first 3 plugs
 
                                                 print ("BINGO GRAM!!! AFIC:"+str(steckerscoreAIC)+"\n\n")   # IC sore after Trigrams applied
                                             #stecker

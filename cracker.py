@@ -7,6 +7,7 @@ from string import ascii_uppercase as pomlist
 from time import time
 from decimal import Decimal
 import collections
+#import pymongo
 
 class cracker():
     
@@ -244,12 +245,65 @@ class cracker():
 
 #cracker suitable for parallel computation
 class crackerParallel():
-    
-    def __init__(self, textToCrack, scorer, subset, q):
+
+    #there are two possible methods to do brute force + hill-climbing. Each comprises of several steps
+
+    # Method #1:
+    # 1st step: brute force all combinations: reflectors (2) + walzen order (60 [5] or 336 [8]) + ring positions (26^3) + fastest grund (26) using Index of Coincidence (IC). 
+    # Combinations: 54 837 120 (5 rotors) or 307 087 872 (8 rotors)
+    # Save the data for later hill-climb
+    # Optional 2nd step: brute force fastest (3rd) and middle (2nd) ring settings (26^2) using best IC.
+    # Combinations: 676
+    # 3rd step: Hill-climb first 3 steckers using IC,
+    # Combinations: 150 738 274 937 250 [26!/(6!*10!*2^10)] = not feasible to brute force.
+    # 4th step: Hill-climb next steckers using bigrams and then trigrams (possibly quadgrams).
+    # Combinations: 150 738 274 937 250 [26!/(6!*10!*2^10)] = not feasible to brute force.
+    #
+    # Steckers (when X steckers are connected):
+    # Plain = % of Plaintext 
+    # Mono  = % of Monoalphabetic substition
+    # Mist  = % of Mist/Garble
+    #
+    # X     Plain   Mono    Mist
+    # 0  :  10.1    18.5    71.4 <--- 71.4% is mist, can't use trigrams. Use IC on Mono part
+    # 1  :  13.3    22.4    64.3
+    # 2  :  17.8    25.0    57.2
+    # 3  :  23.6    26.4    50.0
+    # 4  :  30.6    26.5    42.9 <--- mist clears up significantly, can now use trigrams
+    # 5  :  39.0    25.3    35.7
+    # 6  :  48.6    22.8    28.6
+    # 7  :  59.6    19.0    21.4
+    # 8  :  71.7    14.0    14.3
+    # 9  :  85.2     7.7     7.1
+    # 10 : 100.0     0.0     0.0
+    #
+    #
+    # Method #2 (much slower due to 1st step):
+    # 1st step: brute force reflectors (2) + walzen order (60) + positions (26^3) + fastest (3rd) ring (26) using IC.
+    # Combinations: 54 837 120
+    # 2nd step: Hill-climb first few (~3-4) steckers using monograms. 
+    # Combinations: 3 453 450 - 164 038 875
+    # 3rd step: Hill-climb next few (~3-4) steckers using bigrams. 
+    # Combinations: 3 453 450 - 164 038 875
+    # 4th step: Hill-climb last few (~2-3) steckers using trigrams. 
+    # Combinations: 44 850 -  3 453 450
+    #
+    # Method #3 
+    # 1st step: precompute all possible combinations 27 418 560 (54 837 120 with 2 types of reflector)
+    # 2nd step: Hill-climb using same technique as in method #1
+    #
+    # Index of Coincidence (IC):
+    # Random text, that is where all letters are present with nearly the same frequency, will have an IC 
+    # ‘score’ of 1/26 or 0.03846. If we measure the IC score of plain Enigma text it can be up to around 
+    # 0.05 to 0.07, depending on the actual frequencies of the letters in the plain message.
+    # German IC = 0.0762 German WWII IC = 0.061
+    #
+
+        
+    def __init__(self, textToCrack, subset, q):
         self.ttc = textToCrack
         self.subset = subset
         self.q = q
-        self.scorer = scorer
 
     def steckerHillClimbTest(self, rotors, reflectori, score, plugsIC, plugsGRAM):
         plugboardi = Plugboard({})
@@ -356,65 +410,74 @@ class crackerParallel():
         return bestpairscoreIC, bestpairscoreGRAM, afterwardsIC, dict(plugboardi.wiring)
 
 
-#there are two possible methods to do brute force + hill-climbing. Each comprises of several steps
+    def ultimate_MP_method_1_INITIAL_EXHAUSTION(self): 
+        #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC
 
-# Method #1:
-# 1st step: brute force reflectors (2) + walzen order (60) + positions (26^3) using Index of Coincidence (IC). 
-# Combinations: 2 109 120
-# 2nd step: brute force fastest (3rd) and middle (2nd) ring settings (26^2) using IC.
-# Combinations: 676
-# 3rd step: Hill-climb first 3 steckers using IC,
-# Combinations: 150 738 274 937 250 [26!/(6!*10!*2^10)] = not feasible to brute force.
-# 4th step: Hill-climb next steckers using bigrams and then trigrams (possibly quadgrams).
-# Combinations: 150 738 274 937 250 [26!/(6!*10!*2^10)] = not feasible to brute force.
-#
-# Steckers (when X steckers are connected):
-# Plain = % of Plaintext 
-# Mono  = % of Monoalphabetic substition
-# Mist  = % of Mist/Garble
-#
-# X     Plain   Mono    Mist
-# 0  :  10.1    18.5    71.4 <--- 71.4% is mist, can't use trigrams. Use IC on Mono part
-# 1  :  13.3    22.4    64.3
-# 2  :  17.8    25.0    57.2
-# 3  :  23.6    26.4    50.0
-# 4  :  30.6    26.5    42.9 <--- mist clears up significantly, can now use trigrams
-# 5  :  39.0    25.3    35.7
-# 6  :  48.6    22.8    28.6
-# 7  :  59.6    19.0    21.4
-# 8  :  71.7    14.0    14.3
-# 9  :  85.2     7.7     7.1
-# 10 : 100.0     0.0     0.0
-#
-#
-# Method #2 (much slower due to 1st step):
-# 1st step: brute force reflectors (2) + walzen order (60) + positions (26^3) + fastest (3rd) ring (26) using IC.
-# Combinations: 54 837 120
-# 2nd step: Hill-climb first few (~3-4) steckers using monograms. 
-# Combinations: 3 453 450 - 164 038 875
-# 3rd step: Hill-climb next few (~3-4) steckers using bigrams. 
-# Combinations: 3 453 450 - 164 038 875
-# 4th step: Hill-climb last few (~2-3) steckers using trigrams. 
-# Combinations: 44 850 -  3 453 450
-#
-# Method #3 
-# 1st step: precompute all possible combinations 27 418 560 (54 837 120 with 2 types of reflector)
-# 2nd step: Hill-climb using same technique as in method #1
-#
-# Index of Coincidence (IC):
-# Random text, that is where all letters are present with nearly the same frequency, will have an IC 
-# ‘score’ of 1/26 or 0.03846. If we measure the IC score of plain Enigma text it can be up to around 
-# 0.05 to 0.07, depending on the actual frequencies of the letters in the plain message.
-# German IC = 0.0762 German WWII IC = 0.061
-#
+        scorer = ic_score()
 
-    def ultimate_MP_method_1(self): 
+        #strtowrite = "!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2]
+        #self.q.put(strtowrite)
+        print ("!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2])
+        messagelenght = len(self.ttc)
+
+        bestoftherunIC = -10000
+        bestoftherunGRAM = -10000
+        myscore = -10000
+        botrstring = ""
+        myic=0
+
+        # initliaze empty enigma for further re-use
+        enigmai = Enigma()
+
+        enigmai.setPlugboard(Plugboard({}))
+
+        for r in range(2):
+            #reflectors B and C
+            enigmai.setReflector( Reflector("B" if r == 0 else "C") )
+
+            for i in range(26):
+                for j in range(26):
+                    for k in range(26):
+                        for l in range(26):
+                            start = time()
+                            rotors = {
+                                # i,j,k = rings
+                                # l = fastest grund / offset
+                                1: Rotor(self.subset[0], i, 0),  #slowest, left-most
+                                2: Rotor(self.subset[1], j, 0),  #middle
+                                3: Rotor(self.subset[2], k, l),  #fastest, right-most
+                            }
+                            enigmai.setRotors(rotors)
+                            #print(enigmai)
+
+                            text = enigmai.EDcrypt(self.ttc)
+                            myic = scorer.score(text,messagelenght)
+                            strtowrite = str(myic)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";"+str(l)
+                            #print ("Finished in %.4f seconds." % (time() - start))
+                            self.q.put(strtowrite)
+                            
+                            '''
+                            text = enigmai.EDcrypt(self.ttc)
+                            myic = scorer.score(text)
+                            strtowrite = ""+format(datetime.now(), '%H:%M:%S\n')\
+                            +"Finished in %.4f seconds." % (time() - start)\
+                            +"Rotors> "+rotors[1].number+"-"+rotors[2].number+"-"+rotors[3].number\
+                            +" Ref> "+str(r)+" Rings> "+str(i)+"-"+str(j)+"-"+str(k)+" Grund3> "+str(l)+" "\
+                            +"\nIC> "+str(myic)+"\nGuess> "+text+"\n\n"
+                            '''
+                            self.q.put(strtowrite)
+
+    def ultimate_MP_method_1_HILLCLIMB(self): 
         #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC
         strtowrite = "!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2]     
         self.q.put(strtowrite)
         messagelenght = len(self.ttc)
         ic = 0.04 #threshold, everything less than this won't be even evaluated further
         topic = ic
+
+        scorer_bi = ngram_score('grams/german_bigrams1941.txt')
+        scorer_tri = ngram_score('grams/german_trigrams1941.txt')
+        scorer_quad = ngram_score('grams/german_trigrams1941.txt')
 
         plugs1run = 4               #number of plugs to be indentified by IC
         plugs2run = 10-plugs1run    #rest of the plugs, identified by trigram score
@@ -545,17 +608,21 @@ class crackerParallel():
         strtowrite = ""
         self.q.put(strtowrite)
 
+def initial_exhaustion(subset, q):
+    scrambled = "KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
+    crackerF = crackerParallel(scrambled, subset, q)
+    crackerF.ultimate_MP_method_1_INITIAL_EXHAUSTION()
+
 def final(subset, q):
     #insert the scrambled text 547 char long
     scrambled = "KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
     #scorer_mono = ngram_score('grams/german_monograms.txt')
-    #scorer_bi = ngram_score('grams/german_bigrams.txt')
-    scorer_tri = ngram_score('grams/german_trigrams1941.txt')
+
     #scorer_quad = ngram_score('grams/german_quadgrams.txt')
     scorer = scorer_tri
 
-    crackerF = crackerParallel(scrambled, scorer, subset, q)
-    crackerF.ultimate_MP_method_1()
+    crackerF = crackerParallel(scrambled, subset, q)
+    crackerF.ultimate_MP_method_1_HILLCLIMB()
 
 def simpleTest(grundstellung, scrambledtext):
    

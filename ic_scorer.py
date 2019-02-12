@@ -5,7 +5,7 @@ class ic_score(object):
     def __init__(self):
         pass
 
-    def score(self,text):
+    def score(self,text,messagelenght):
         icscore=0
 
         temp=Counter(text)
@@ -13,6 +13,6 @@ class ic_score(object):
         for key,value in temp.items():
             icscore+=value*(value-1)
   
-        icscore=icscore/((len(text))*(len(text)-1))
+        icscore=icscore/(messagelenght*(messagelenght-1))
 
         return icscore

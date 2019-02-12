@@ -33,16 +33,3 @@ class ngram_score(object):
             if text[i:i+self.L] in self.ngrams: score += ngrams(text[i:i+self.L])
             else: score += self.floor
         return score
-
-    def icscore(self,text):
-        ''' compute the score of text (Index of Coincidence) '''
-        icscore=0
-
-        temp=Counter(text)
-        
-        for key,value in temp.items():
-            icscore+=value*(value-1)
-  
-        icscore=icscore/((len(text))*(len(text)-1))
-
-        return icscore

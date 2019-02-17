@@ -4,10 +4,10 @@ from json import dumps as json_dumps
 class Enigma:
     mapping = {c: ord(c) - 65 for c in pomlist}
 
-    def __init__(self, rotors: dict=None, reflector=None, plugboard=None):
+    def __init__(self, rotors: dict = None, reflector = None, plugboard = None):
         self.rotors = rotors  # create a new copy of rotors dict
         self.reflector = reflector
-        self.plugboard = plugboard
+        self.plugboard = plugboard or Plugboard()
         # self.mapping = dict((c, ord(c) - 65) for c in pomlist)
 
     def __str__(self):
@@ -17,15 +17,6 @@ class Enigma:
         sep = '#' * 85
         return '%s\nEnigma:\n%s\n%s\n\n%s\n%s' % (sep, rotors, self.reflector, self.plugboard, sep)
 
-    def setRotors (self, rotors: dict):
-        self.rotors = dict(rotors)
-
-    def setReflector (self, reflector):
-        self.reflector = reflector
-
-    def setPlugboard (self, plugboard):
-        self.plugboard = plugboard
-            
     def EDcrypt(self, text):
         r1pos = self.rotors[1].grund
         r2pos = self.rotors[2].grund

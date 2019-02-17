@@ -70,14 +70,18 @@ class Reflector:
             }
 
     def __init__(self, umkehrwalze):
+        if umkehrwalze not in self.options:
+            raise ValueError('"%s" is not a valid reflector type! Possible options are: [%s]' % (umkehrwalze, ', ',join([self.options])))
         self.typ = umkehrwalze
-        self.setting = self.options.get(umkehrwalze,"")
+        self.setting = self.options[umkehrwalze]
 
     def __repr__(self):
         return 'Reflector %s: %s' % (self.typ, self.setting)
         
 class Plugboard:
-    def __init__(self, steckerbrett: dict):
+    def __init__(self, steckerbrett: dict = None):
+        if not steckerbrett:
+            steckerbrett = {}
         self.wiring = self.setWiring(steckerbrett)
     
     def setWiring(self, steckerbrett: dict):
@@ -89,3 +93,4 @@ class Plugboard:
 
     def __repr__(self):
         return 'Plugboard: %s' % json_dumps(self.wiring, indent=4, sort_keys=True)
+

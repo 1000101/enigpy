@@ -81,7 +81,7 @@ class cracker():
         f.flush()
 
         grunds = self.decodeGrundStellung()
-        plugboardi = Plugboard({})
+        plugboardi = Plugboard()
         reflectori = Reflector("B")
         rotors = {
             1: Rotor("VIII",19-1, pomlist.index(grunds[0])),  #slowest, left-most
@@ -125,7 +125,7 @@ class cracker():
         #print (text)
 
     def steckerHillClimbTest(self, rotors, reflectori, score, plugsIC, plugsGRAM):
-        plugboardi = Plugboard({})
+        plugboardi = Plugboard()
         
         
         # we'll try to hill-climb the first 3 most frequent letters using IC
@@ -430,14 +430,12 @@ class crackerParallel():
         # initliaze empty enigma for further re-use
         enigmai = Enigma()
 
-        enigmai.setPlugboard(Plugboard({}))
-
         cunt=0
         olmajtytajm=0
 
         for r in range(2):
             #reflectors B and C
-            enigmai.setReflector( Reflector("B" if r == 0 else "C") )
+            enigmai.reflector = Reflector("B" if r == 0 else "C")
 
             for i in range(26):
                 for j in range(26):
@@ -451,7 +449,7 @@ class crackerParallel():
                             2: Rotor(self.subset[1], j, 0),  #middle
                             3: Rotor(self.subset[2], k, 0),  #fastest, right-most
                         }
-                        enigmai.setRotors(rotors)
+                        enigmai.rotors = rotors
                         text = enigmai.EDcrypt(self.ttc)
                         firstIC=scorer.score(text,messagelenght)
                         
@@ -465,7 +463,7 @@ class crackerParallel():
                                     2: Rotor(self.subset[1], j, 0),  #middle
                                     3: Rotor(self.subset[2], k, l),  #fastest, right-most
                                 }
-                                enigmai.setRotors(rotors)
+                                enigmai.rotors = rotors
                                 #print(enigmai)
 
                                 text = enigmai.EDcrypt(self.ttc)
@@ -509,7 +507,7 @@ class crackerParallel():
         plugs1run = 4               #number of plugs to be indentified by IC
         plugs2run = 10-plugs1run    #rest of the plugs, identified by trigram score
 
-        plugboardi = Plugboard({})
+        plugboardi = Plugboard()
         bestoftherunIC = -10000
         bestoftherunGRAM = -10000
         myscore = -10000

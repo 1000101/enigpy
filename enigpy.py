@@ -27,6 +27,7 @@ def listener(q):
             break
         mscore = float(m.split(';')[0])
         f.write(str(m) + '\n')
+        f.flush()
         if (mscore > 0.045):
             if (mscore > 0.05):
                 b50.write(str(m) + '\n')

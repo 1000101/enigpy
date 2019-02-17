@@ -16,7 +16,7 @@ def listener(q):
     b45 = open("best0045.txt", 'a') # IC > 0.045
     b50 = open("best0050.txt", 'a') # IC > 0.05
     start=datetime.now()
-    f.write("\n\nSTART: "+format(start, '%H:%M:%S')+"\n\n")
+    f.write("START: "+format(start, '%H:%M:%S')+"\n\n")
     f.flush()
     while 1:
         m = q.get()
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     walzennumbers = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]  
     #jobs = []
     print ("Logical cores available %d" % multiprocessing.cpu_count())
-    noteating=1
+    noteating=4
     print ("Cores NOT being eaten omnomnom %d" % noteating)
     
     manager = multiprocessing.Manager()

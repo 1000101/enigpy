@@ -23,6 +23,7 @@ def listener(q):
             f.flush()
             break
         f.write(str(m) + '\n')
+        print (str(m))
         f.flush()
     f.close()
 
@@ -56,22 +57,14 @@ if __name__ == "__main__":
     watcher = pool.apply_async(listener, (q,))
 
     jobs = []
-    
-    #if we want to chceck walzen subsets or just speed computation across cores without walzens
-    walzen=True
 
-    if (walzen):
-        for subset in itertools.permutations(walzennumbers, 3):
-            job = pool.apply_async(cracker.initial_exhaustion, (subset,q))
-             #p=multiprocessing.Process(target=multi7, args=(subset,))
-                #jobs.append(p)
-                #p.start()
-            jobs.append(job)
-    else:
-        for subset in range(26):
-            job = pool.apply_async(cracker.finalRing, (subset,q))
-            jobs.append(job)
-            
+    for subset in itertools.permutations(walzennumbers, 3):
+        job = pool.apply_async(cracker.initial_exhaustion, (subset,q))
+            #p=multiprocessing.Process(target=multi7, args=(subset,))
+            #jobs.append(p)
+            #p.start()
+        jobs.append(job)
+  
     for job in jobs: 
         job.get()
     

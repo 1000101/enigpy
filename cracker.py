@@ -409,7 +409,6 @@ class crackerParallel():
 
         return bestpairscoreIC, bestpairscoreGRAM, afterwardsIC, dict(plugboardi.wiring)
 
-
     def ultimate_MP_method_1_INITIAL_EXHAUSTION(self): 
         #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC
 
@@ -441,7 +440,7 @@ class crackerParallel():
                 for j in range(26):
                     for k in range(26):
                         firstIC=0
-                        start = time()
+                        #start = time()
                         rotors = {
                             # i,j,k = rings
                             # l = fastest grund / offset
@@ -477,9 +476,11 @@ class crackerParallel():
                                 #print ("Finished in average of %.4f seconds." % (time() - start))
                                 self.q.put(strtowrite)
                                     
+                        '''
                         olmajtytajm+=time() - start
                         cunt+=1
                         print ("Finished in average of %.4f seconds." % (olmajtytajm/cunt))
+                        '''
                             
                         '''
                         text = enigmai.EDcrypt(self.ttc)

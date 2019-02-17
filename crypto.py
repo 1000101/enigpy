@@ -1,6 +1,8 @@
 from string import ascii_uppercase as pomlist
 from json import dumps as json_dumps
 from components import Plugboard
+import numpy as np
+from numba import jit
 
 class Enigma:
     mapping = {c: ord(c) - 65 for c in pomlist}
@@ -19,16 +21,16 @@ class Enigma:
         return '%s\nEnigma:\n%s\n%s\n\n%s\n%s' % (sep, rotors, self.reflector, self.plugboard, sep)
 
     def EDcrypt(self, text):
-        r1pos = self.rotors[1].grund
+        r1pos = int(self.rotors[1].grund)
         r2pos = self.rotors[2].grund
         r3pos = self.rotors[3].grund
         scrambled = ""
         
         for letter in text:
             onecipher = ""
-            enc = 0
             r3pos += 1
 
+            #neede four double stepping of VI, VII, VIII
             stepagain1 = False # 2 notches on VI VII VIII --- moving slowest rotor
             stepagain2 = False # 2 notches on VI VII VIII --- moving middle rotor
             
@@ -46,7 +48,7 @@ class Enigma:
 
                 if (self.rotors[2].step == 13 and r2pos == 26):
                   stepagain1 = True
-
+                
                 if (r2pos == self.rotors[2].step or stepagain1 == True):
                     #print("stepping slow")
                     r1pos += 1
@@ -62,6 +64,7 @@ class Enigma:
                 r1pos = 0
     
             onecipher = letter
+            
             
             if onecipher in self.plugboard.wiring:
                 onecipher = self.plugboard.wiring.get(onecipher)
@@ -79,10 +82,10 @@ class Enigma:
             onecipher = pomlist[pomlist.index(onecipher)] 
             onecipher = pomlist[self.rotors[3].wiring.index(onecipher)]
             onecipher = pomlist[((pomlist.index(onecipher)-r3pos) % 26)]
-
-
+            
             if onecipher in self.plugboard.wiring:
                 onecipher = self.plugboard.wiring.get(onecipher)
+            
             scrambled += onecipher
 
         return scrambled

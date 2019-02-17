@@ -1,5 +1,6 @@
 from string import ascii_uppercase as pomlist
 from json import dumps as json_dumps
+from components import Plugboard
 
 class Enigma:
     mapping = {c: ord(c) - 65 for c in pomlist}

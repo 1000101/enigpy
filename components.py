@@ -71,7 +71,7 @@ class Reflector:
 
     def __init__(self, umkehrwalze):
         if umkehrwalze not in self.options:
-            raise ValueError('"%s" is not a valid reflector type! Possible options are: [%s]' % (umkehrwalze, ', ',join([self.options])))
+            raise ValueError('"%s" is not a valid reflector type! Possible options are: [%s]' % (umkehrwalze, ', '.join(self.options)))
         self.typ = umkehrwalze
         self.setting = self.options[umkehrwalze]
 

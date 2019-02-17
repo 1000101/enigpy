@@ -1,2 +1,1 @@
-# enigpy
-Python implementation of Enigma and its crackerrr
+Enigma and its cracker using Hill-climbing

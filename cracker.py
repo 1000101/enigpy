@@ -452,7 +452,7 @@ class crackerParallel():
                         text = enigmai.EDcrypt(self.ttc)
                         firstIC=scorer.score(text,messagelenght)
                         
-                        if (firstIC>0.04):
+                        if (firstIC>0.038):
                             topIC=firstIC
                             for l in range(26):
                                 rotors = {
@@ -498,7 +498,7 @@ class crackerParallel():
         strtowrite = "!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2]     
         self.q.put(strtowrite)
         messagelenght = len(self.ttc)
-        ic = 0.04 #threshold, everything less than this won't be even evaluated further
+        ic = 0 #threshold, everything less than this won't be even evaluated further
         topic = ic
 
         scorer_bi = ngram_score('grams/german_bigrams1941.txt')

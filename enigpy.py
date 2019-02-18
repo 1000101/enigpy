@@ -13,8 +13,8 @@ def listener(q):
 
     f = open("all.txt", 'a') # all that pass the limit set during exhaustion, currently at 0.04
     #b40 = open("best0040.txt", 'a') # IC > 0.04
-    b45 = open("best0045.txt", 'a') # IC > 0.045
-    b50 = open("best0050.txt", 'a') # IC > 0.05
+    b42 = open("best0042.txt", 'a') # IC > 0.045
+    b45 = open("best0055.txt", 'a') # IC > 0.05
     start=datetime.now()
     f.write("START: "+format(start, '%H:%M:%S')+"\n\n")
     f.flush()
@@ -28,19 +28,19 @@ def listener(q):
         mscore = float(m.split(';')[0])
         f.write(str(m) + '\n')
         f.flush()
-        if (mscore > 0.045):
-            if (mscore > 0.05):
-                b50.write(str(m) + '\n')
-                b50.flush()
-                print ("50 EEEY")
-            else:        
+        if (mscore > 0.042):
+            if (mscore > 0.045):
                 b45.write(str(m) + '\n')
                 b45.flush()
+                print ("50 EEEY")
+            else:        
+                b42.write(str(m) + '\n')
+                b42.flush()
                 print ("45 EY")
     f.close()
     #b40.close()
+    b42.close()
     b45.close()
-    b50.close()
 
 
 if __name__ == "__main__":
@@ -63,7 +63,7 @@ if __name__ == "__main__":
     walzennumbers = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"]  
     #jobs = []
     print ("Logical cores available %d" % multiprocessing.cpu_count())
-    noteating=4
+    noteating=1
     print ("Cores NOT being eaten omnomnom %d" % noteating)
     
     manager = multiprocessing.Manager()

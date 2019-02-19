@@ -1,7 +1,7 @@
 from components import Plugboard, Reflector, Rotor
 from crypto import Enigma
-from scorers import ngram_score
-from ic_scorer import ic_score
+from scorers import scorer_ngrams
+from scorer_ic import scorer_ic
 from datetime import datetime
 from string import ascii_uppercase as pomlist
 from time import time
@@ -412,7 +412,7 @@ class crackerParallel():
     def ultimate_MP_method_1_INITIAL_EXHAUSTION(self): 
         #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC
 
-        scorer = ic_score()
+        scorer = scorer_ic()
 
         #strtowrite = "!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2]
         #self.q.put(strtowrite)
@@ -452,14 +452,15 @@ class crackerParallel():
                         text = enigmai.EDcrypt(self.ttc)
                         firstIC=scorer.score(text,messagelenght)
                         
-                        if (firstIC>0.038):
-                            topIC=firstIC
-                            for l in range(26):
+                        topIC=firstIC
+                        #test Grunds for fast and middle wheels
+                        for l in range(26):
+                            for m in range(26):
                                 rotors = {
                                     # i,j,k = rings
                                     # l = fastest grund / offset
                                     1: Rotor(self.subset[0], i, 0),  #slowest, left-most
-                                    2: Rotor(self.subset[1], j, 0),  #middle
+                                    2: Rotor(self.subset[1], j, m),  #middle
                                     3: Rotor(self.subset[2], k, l),  #fastest, right-most
                                 }
                                 enigmai.rotors = rotors
@@ -469,12 +470,16 @@ class crackerParallel():
                                 secondIC = scorer.score(text,messagelenght)
                                 if secondIC>topIC:
                                     topIC=secondIC
-                                    topGrund=l
+                                    topGrundFast=m
+                                    topGrundMiddle=l
 
-                            if (topIC>firstIC):
-                                strtowrite = str(topIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";"+str(topGrund)
-                                #print ("Finished in average of %.4f seconds." % (time() - start))
-                                self.q.put(strtowrite)
+
+                        if (topIC>firstIC):
+                            strtowrite = str(topIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";"+str(topGrundMiddle)+";"+str(topGrundFast)
+                            self.q.put(strtowrite)
+                        else:
+                            strtowrite = str(firstIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";0"
+                            self.q.put(strtowrite)
                                     
                         '''
                         olmajtytajm+=time() - start
@@ -501,9 +506,9 @@ class crackerParallel():
         ic = 0 #threshold, everything less than this won't be even evaluated further
         topic = ic
 
-        scorer_bi = ngram_score('grams/german_bigrams1941.txt')
-        scorer_tri = ngram_score('grams/german_trigrams1941.txt')
-        scorer_quad = ngram_score('grams/german_trigrams1941.txt')
+        scorer_bi = scorer_ngrams('grams/german_bigrams1941.txt')
+        scorer_tri = scorer_ngrams('grams/german_trigrams1941.txt')
+        scorer_quad = scorer_ngrams('grams/german_trigrams1941.txt')
 
         plugs1run = 4               #number of plugs to be indentified by IC
         plugs2run = 10-plugs1run    #rest of the plugs, identified by trigram score
@@ -642,9 +647,9 @@ def initial_exhaustion(subset, q):
 def final(subset, q):
     #insert the scrambled text 547 char long
     scrambled = "KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
-    #scorer_mono = ngram_score('grams/german_monograms.txt')
+    #scorer_mono = scorer_ngrams('grams/german_monograms.txt')
 
-    #scorer_quad = ngram_score('grams/german_quadgrams.txt')
+    #scorer_quad = scorer_ngrams('grams/german_quadgrams.txt')
     scorer = scorer_tri
 
     crackerF = crackerParallel(scrambled, subset, q)
@@ -654,9 +659,9 @@ def simpleTest(grundstellung, scrambledtext):
    
     print ("---------- simple test - Right decryption: ----------------")
 
-    scorer_IC = ic_score()
-    scorer_bi = ngram_score('grams/german_bigrams1941.txt')
-    scorer_tri = ngram_score('grams/german_trigrams1941.txt')
+    scorer_IC = scorer_ic()
+    scorer_bi = scorer_ngrams('grams/german_bigrams1941.txt')
+    scorer_tri = scorer_ngrams('grams/german_trigrams1941.txt')
     crackerTest = cracker(grundstellung, scrambledtext, scorer_IC, scorer_bi, scorer_tri)
     crackerTest.test()
     print ("-----------------------------------------------------------")
@@ -665,9 +670,9 @@ def simpleTest(grundstellung, scrambledtext):
 def hillTest(grundstellung, scrambledtext):
     print ("-------- hill test - work in progress heuristics: ---------")
     #scrambled = "KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
-    scorer_IC = ic_score()
-    scorer_bi = ngram_score('grams/german_bigrams1941.txt')
-    scorer_tri = ngram_score('grams/german_trigrams1941.txt')
+    scorer_IC = scorer_ic()
+    scorer_bi = scorer_ngrams('grams/german_bigrams1941.txt')
+    scorer_tri = scorer_ngrams('grams/german_trigrams1941.txt')
     crackerTest = cracker(grundstellung, scrambledtext, scorer_IC, scorer_bi, scorer_tri)
     crackerTest.testHillClimb()
     print ("-----------------------------------------------------------")

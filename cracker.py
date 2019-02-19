@@ -1,6 +1,6 @@
 from components import Plugboard, Reflector, Rotor
 from crypto import Enigma
-from scorers_ngrams import scorer_ngrams
+from scorer_ngrams import scorer_ngrams
 from scorer_ic import scorer_ic
 from datetime import datetime
 from string import ascii_uppercase as pomlist

@@ -1,7 +1,7 @@
 from collections import Counter
 from math import log10
 
-class ngram_score(object):
+class scorer_ngrams(object):
 
     ngrams = {}
     L=0
@@ -10,19 +10,19 @@ class ngram_score(object):
 
     def __init__(self,ngramfile,sep=' '):
         ''' load a file containing ngrams and counts, calculate log probabilities and keep them in memory '''
-        if not ngram_score.ngrams:
+        if not scorer_ngrams.ngrams:
             with open(ngramfile) as file:
                 for line in file:
                     key,count = line.split(sep) 
-                    ngram_score.ngrams[key] = int(count)
+                    scorer_ngrams.ngrams[key] = int(count)
 
-            ngram_score.L = len(key)
-            self.N = sum(ngram_score.ngrams.values())
+            scorer_ngrams.L = len(key)
+            self.N = sum(scorer_ngrams.ngrams.values())
 
             #calculate log probabilities
-            for key in ngram_score.ngrams.keys():
-                ngram_score.ngrams[key] = log10(float(ngram_score.ngrams[key])/self.N)
-            ngram_score.floor = log10(0.01/self.N)
+            for key in scorer_ngrams.ngrams.keys():
+                scorer_ngrams.ngrams[key] = log10(float(scorer_ngrams.ngrams[key])/self.N)
+            scorer_ngrams.floor = log10(0.01/self.N)
 
     def score(self,text):
         ''' compute the score of text (n-gram) '''

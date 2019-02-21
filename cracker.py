@@ -594,7 +594,7 @@ class crackerParallel():
                         enigmai.rotors = rotors
                         text = enigmai.EDcrypt(self.ttc)
                         myIC=scorer.score(text,messagelenght)
-                        print (myIC)
+                        #print (myIC)
                         if myIC>topIC:
                             topIC=myIC
                             topGrundSlow=i

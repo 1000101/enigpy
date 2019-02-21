@@ -409,7 +409,7 @@ class crackerParallel():
 
         return bestpairscoreIC, bestpairscoreGRAM, afterwardsIC, dict(plugboardi.wiring)
 
-    def ultimate_MP_method_1_INITIAL_EXHAUSTION(self): 
+    def ultimate_MP_method_1_INITIAL_EXHAUSTION_FAST(self): 
         #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC
 
         scorer = scorer_ic()
@@ -455,48 +455,161 @@ class crackerParallel():
                         topIC=firstIC
                         #test Grunds for fast and middle wheels
                         for l in range(26):
-                            for m in range(26):
-                                rotors = {
-                                    # i,j,k = rings
-                                    # l = fastest grund / offset
-                                    1: Rotor(self.subset[0], i, 0),  #slowest, left-most
-                                    2: Rotor(self.subset[1], j, m),  #middle
-                                    3: Rotor(self.subset[2], k, l),  #fastest, right-most
-                                }
-                                enigmai.rotors = rotors
-                                #print(enigmai)
+                            rotors = {
+                                # i,j,k = rings
+                                # l = fastest grund / offset
+                                1: Rotor(self.subset[0], i, 0),  #slowest, left-most
+                                2: Rotor(self.subset[1], j, 0),  #middle
+                                3: Rotor(self.subset[2], k, l),  #fastest, right-most
+                            }
+                            enigmai.rotors = rotors
+                            #print(enigmai)
 
-                                text = enigmai.EDcrypt(self.ttc)
-                                secondIC = scorer.score(text,messagelenght)
-                                if secondIC>topIC:
-                                    topIC=secondIC
-                                    topGrundFast=m
-                                    topGrundMiddle=l
+                            text = enigmai.EDcrypt(self.ttc)
+                            secondIC = scorer.score(text,messagelenght)
+                            if secondIC>topIC:
+                                topIC=secondIC
+                                topGrundFast=l
 
 
                         if (topIC>firstIC):
-                            strtowrite = str(topIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";"+str(topGrundMiddle)+";"+str(topGrundFast)
+                            strtowrite = str(topIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";"+str(topGrundFast)
                             self.q.put(strtowrite)
                         else:
                             strtowrite = str(firstIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";0"
                             self.q.put(strtowrite)
                                     
-                        '''
-                        olmajtytajm+=time() - start
-                        cunt+=1
-                        print ("Finished in average of %.4f seconds." % (olmajtytajm/cunt))
-                        '''
+
+    def ultimate_MP_method_1_INITIAL_EXHAUSTION_EXTENDED_SLOOOW(self): 
+            #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC
+
+            scorer = scorer_ic()
+
+            #strtowrite = "!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2]
+            #self.q.put(strtowrite)
+            print ("!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2])
+            messagelenght = len(self.ttc)
+
+            bestoftherunIC = -10000
+            bestoftherunGRAM = -10000
+            myscore = -10000
+            botrstring = ""
+            myic=0
+            topIC=0
+
+            # initliaze empty enigma for further re-use
+            enigmai = Enigma()
+
+            cunt=0
+            olmajtytajm=0
+
+            for r in range(2):
+                #reflectors B and C
+                enigmai.reflector = Reflector("B" if r == 0 else "C")
+
+                for i in range(26):
+                    for j in range(26):
+                        for k in range(26):
+                            firstIC=0
+                            #start = time()
+                            rotors = {
+                                # i,j,k = rings
+                                # l = fastest grund / offset
+                                1: Rotor(self.subset[0], i, 0),  #slowest, left-most
+                                2: Rotor(self.subset[1], j, 0),  #middle
+                                3: Rotor(self.subset[2], k, 0),  #fastest, right-most
+                            }
+                            enigmai.rotors = rotors
+                            text = enigmai.EDcrypt(self.ttc)
+                            firstIC=scorer.score(text,messagelenght)
                             
-                        '''
+                            topIC=firstIC
+                            #test Grunds for fast and middle wheels
+                            for l in range(26):
+                                for m in range(26):
+                                    rotors = {
+                                        # i,j,k = rings
+                                        # l = fastest grund / offset
+                                        1: Rotor(self.subset[0], i, 0),  #slowest, left-most
+                                        2: Rotor(self.subset[1], j, l),  #middle
+                                        3: Rotor(self.subset[2], k, m),  #fastest, right-most
+                                    }
+                                    enigmai.rotors = rotors
+                                    #print(enigmai)
+
+                                    text = enigmai.EDcrypt(self.ttc)
+                                    secondIC = scorer.score(text,messagelenght)
+                                    if secondIC>topIC:
+                                        topIC=secondIC
+                                        topGrundFast=m
+                                        topGrundMiddle=l
+
+
+                            if (topIC>firstIC):
+                                strtowrite = str(topIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";"+str(topGrundMiddle)+";"+str(topGrundFast)
+                                self.q.put(strtowrite)
+                            else:
+                                strtowrite = str(firstIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(r)+";"+str(i)+";"+str(j)+";"+str(k)+";0"
+                                self.q.put(strtowrite)
+                                        
+                            '''
+                            olmajtytajm+=time() - start
+                            cunt+=1
+                            print ("Finished in average of %.4f seconds." % (olmajtytajm/cunt))
+                            '''
+
+
+    def ultimate_MP_method_1_GRUND_EXHAUSTION(self): 
+            # 2nd step is to find out the plausible grund settings as candidates for Hill Climbing
+
+            scorer = scorer_ic()
+            
+            candidate = self.subset.split(';')
+            #print (candidate[0])
+            
+            #strtowrite = "!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ self.subset[0]+"-"+self.subset[1]+"-"+ self.subset[2]
+            #self.q.put(strtowrite)
+            print ("!!! Starting at " +format(datetime.now(), '%H:%M:%S')+ " with: "+ candidate[0]+"-"+candidate[1]+"-"+ candidate[2]+"-"+candidate[3])
+            messagelenght = len(self.ttc)
+
+            myIC=0
+            topIC=float(candidate[0])
+
+            # initliaze empty enigma for further re-use
+            enigmai = Enigma()
+
+            enigmai.reflector = Reflector("B" if int(candidate[4]) == 0 else "C")
+
+            for i in range(26):
+                for j in range(26):
+                    for k in range(26):
+                        #start = time()
+                        rotors = {
+                            # i,j,k = rings
+                            # l = fastest grund / offset
+                            1: Rotor(candidate[1], int(candidate[5]), i),  #slowest, left-most
+                            2: Rotor(candidate[2], int(candidate[6]), j),  #middle
+                            3: Rotor(candidate[3], int(candidate[7]), k),  #fastest, right-most
+                        }
+                        enigmai.rotors = rotors
                         text = enigmai.EDcrypt(self.ttc)
-                        myic = scorer.score(text)
-                        strtowrite = ""+format(datetime.now(), '%H:%M:%S\n')\
-                        +"Finished in %.4f seconds." % (time() - start)\
-                        +"Rotors> "+rotors[1].number+"-"+rotors[2].number+"-"+rotors[3].number\
-                        +" Ref> "+str(r)+" Rings> "+str(i)+"-"+str(j)+"-"+str(k)+" Grund3> "+str(l)+" "\
-                        +"\nIC> "+str(myic)+"\nGuess> "+text+"\n\n"
-                        self.q.put(strtowrite)
-                        '''
+                        myIC=scorer.score(text,messagelenght)
+                        print (myIC)
+                        if myIC>topIC:
+                            topIC=myIC
+                            topGrundSlow=i
+                            topGrundMiddle=j
+                            topGrundFast=k
+                            topText=text
+                            print (topText)
+
+
+            if (myIC>topIC):
+                strtowrite = str(candidate[0])+";"+str(topIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(topGrundSlow)+";"+str(topGrundMiddle)+";"+str(topGrundFast)+"\n"+text+"\n"
+                self.q.put(strtowrite)
+            else:
+                strtowrite = str(candidate[0])+" FOUND NUTHIN'!"
+                self.q.put(strtowrite)
 
     def ultimate_MP_method_1_HILLCLIMB(self): 
         #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC
@@ -642,7 +755,12 @@ class crackerParallel():
 def initial_exhaustion(subset, q):
     scrambled = "KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
     crackerF = crackerParallel(scrambled, subset, q)
-    crackerF.ultimate_MP_method_1_INITIAL_EXHAUSTION()
+    crackerF.ultimate_MP_method_1_INITIAL_EXHAUSTION_FAST()
+
+def initial_exhaustion_grunds(subset, q):
+    scrambled = "KYYUGIWKSEYPQDFYPIJNTGNDIAHNBROXDIKEKPTMOUHBEJRRJPVBAOCUZRDFSAZDCNUNNMRPCCMCHJBWSTIKZIREBBVJQAXZARIYVANIJVOLDNBUMXXFNZVRQEGOYXEVVNMPWEBSKEUTJJOKPBKLHIYWGNFFPXKIEWSNTLMDKYIDMOFPTDFJAZOHVVQETNIPVZGTUMYJCMSEAKTYELPZUNHEYFCLAADYPEEXMHQMVAVZZDOIMGLERBBLATHQJIYCBSUPVVTRADCRDDSTYIXYFEAFZYLNZZDPNNXXZJNRCWEXMTYRJOIAOEKNRXGXPNMTDGKFZDSYHMUJAPOBGANCRCZTMEPXESDZTTJZGNGQRMKNCZNAFMDAXXTJSRTAZTZKRTOXHAHTNPEVNAAVUZMHLPXLMSTWELSOBCTMBKGCJKMDPDQQGCZHMIOCGRPDJEZTYVDQGNPUKCGKFFWMNKWPSCLENWHUEYCLYVHZNKNVSCZXUXDPZBDPSYODLQRLCGHARLFMMTPOCUMOQLGJJAVXHZZVBFLXHNNEJXS" 
+    crackerF = crackerParallel(scrambled, subset, q)
+    crackerF.ultimate_MP_method_1_GRUND_EXHAUSTION()
 
 def final(subset, q):
     #insert the scrambled text 547 char long

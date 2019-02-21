@@ -1,9 +1,8 @@
-#!/usr/bin/env python3
-
 #local
 import cracker
 
 #global
+import os.path
 import itertools
 import multiprocessing
 from datetime import datetime
@@ -11,12 +10,9 @@ from datetime import datetime
 def listener(q):
     '''listens for messages on the q, writes to file. '''
 
-    f = open("all.txt", 'a') # all that pass the limit set during exhaustion, currently at 0.04
-    #b40 = open("best0040.txt", 'a') # IC > 0.04
-    b42 = open("best0042.txt", 'a') # IC > 0.045
-    b45 = open("best0055.txt", 'a') # IC > 0.05
+    f = open("attempt.txt", 'a')
     start=datetime.now()
-    f.write("START: "+format(start, '%H:%M:%S')+"\n\n")
+    f.write("\n\nSTART: "+format(start, '%H:%M:%S')+"\n\n")
     f.flush()
     while 1:
         m = q.get()
@@ -25,23 +21,9 @@ def listener(q):
             print ("STOP: "+format(datetime.now(), '%H:%M:%S')+"\nRUN TIME: "+str(datetime.now()-start))
             f.flush()
             break
-        mscore = float(m.split(';')[0])
         f.write(str(m) + '\n')
         f.flush()
-        if (mscore > 0.042):
-            if (mscore > 0.045):
-                b45.write(str(m) + '\n')
-                b45.flush()
-                print ("50 EEEY")
-            else:        
-                b42.write(str(m) + '\n')
-                b42.flush()
-                print ("45 EY")
     f.close()
-    #b40.close()
-    b42.close()
-    b45.close()
-
 
 if __name__ == "__main__":
 
@@ -73,17 +55,32 @@ if __name__ == "__main__":
     watcher = pool.apply_async(listener, (q,))
 
     jobs = []
-
-    for subset in itertools.permutations(walzennumbers, 3):
-        job = pool.apply_async(cracker.initial_exhaustion, (subset,q))
-            #p=multiprocessing.Process(target=multi7, args=(subset,))
-            #jobs.append(p)
-            #p.start()
-        jobs.append(job)
-  
-    for job in jobs: 
-        job.get()
     
+    #if we're doing initial exhaustion or we already have generated 
+    initialExhaustion=False
+
+    if (initialExhaustion):
+        for subset in itertools.permutations(walzennumbers, 3):
+            job = pool.apply_async(cracker.initial_exhaustion, (subset,q))
+             #p=multiprocessing.Process(target=multi7, args=(subset,))
+                #jobs.append(p)
+                #p.start()
+            jobs.append(job)
+    else:   
+        if os.path.exists("RESULTS/best.txt"): 
+
+            best_input = open("RESULTS/best.txt", 'r').read().split('\n')
+            for subset in best_input:
+                #print (subset)
+                #print ("1")
+                job = pool.apply_async(cracker.initial_exhaustion_grunds, (subset,q))
+                jobs.append(job)
+        else:
+            print ("Result file not found!")
+
+    for job in jobs: 
+        job.get()         
+
     q.put('kill')
     pool.close()
     pool.join()

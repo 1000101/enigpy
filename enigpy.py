@@ -87,7 +87,7 @@ if __name__ == "__main__":
     else:   
         if os.path.exists("RESULTS/best.txt"): 
 
-            best_input = open("RESULTS/best.txt", 'r').read().split('\n')
+            #best_input = open("RESULTS/best.txt", 'r').read().split('\n')
             with open("RESULTS/best.txt", 'r') as best:
                 for subset in best:
                     #print (subset)

@@ -580,7 +580,7 @@ class crackerParallel():
 
             enigmai.reflector = Reflector("B" if int(candidate[4]) == 0 else "C")
 
-            for i in range(26):
+            for i in range(1):
                 for j in range(26):
                     for k in range(26):
                         #start = time()
@@ -595,21 +595,22 @@ class crackerParallel():
                         text = enigmai.EDcrypt(self.ttc)
                         myIC=scorer.score(text,messagelenght)
                         #print (myIC)
-                        if myIC>topIC:
+                        if myIC>=topIC:
                             topIC=myIC
                             topGrundSlow=i
                             topGrundMiddle=j
                             topGrundFast=k
                             topText=text
-                            print (topText)
+                            #print (topText)
 
 
             if (myIC>topIC):
-                strtowrite = str(candidate[0])+";"+str(topIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(topGrundSlow)+";"+str(topGrundMiddle)+";"+str(topGrundFast)+"\n"+text+"\n"
+                strtowrite = str(candidate[0])+";"+str(topIC)+";"+rotors[1].number+";"+rotors[2].number+";"+rotors[3].number+";"+str(topGrundSlow)+";"+str(topGrundMiddle)+";"+str(topGrundFast)
                 self.q.put(strtowrite)
             else:
-                strtowrite = str(candidate[0])+" FOUND NUTHIN'!"
-                self.q.put(strtowrite)
+                pass
+                #strtowrite = str(candidate[0])+" FOUND NUTHIN'!"
+                #self.q.put(strtowrite)
 
     def ultimate_MP_method_1_HILLCLIMB(self): 
         #1st step is to find out the plausible walzen and ring settings candidates for next steps using IC

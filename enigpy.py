@@ -10,9 +10,11 @@ from datetime import datetime
 def listener(q):
     '''listens for messages on the q, writes to file. '''
 
-    f = open("attempt.txt", 'a')
+    f = open("all.txt", 'a') # all that pass the limit set during exhaustion, currently at 0.04
+    b42 = open("b42.txt", 'a') # IC > 0.042
+    beeest = open("beeest.txt", 'a') # IC > 0.045
     start=datetime.now()
-    f.write("\n\nSTART: "+format(start, '%H:%M:%S')+"\n\n")
+    f.write("START: "+format(start, '%H:%M:%S')+"\n\n")
     f.flush()
     while 1:
         m = q.get()
@@ -21,9 +23,25 @@ def listener(q):
             print ("STOP: "+format(datetime.now(), '%H:%M:%S')+"\nRUN TIME: "+str(datetime.now()-start))
             f.flush()
             break
+        
+        mscore = float(m.split(';')[0])
         f.write(str(m) + '\n')
         f.flush()
+        
+        if (mscore > 0.042):
+            if (mscore > 0.045):
+                beeest.write(str(m) + '\n')
+                beeest.flush()
+                print ("BEST EEEEY")
+            else:        
+                b42.write(str(m) + '\n')
+                b42.flush()
+                print ("42 EEEEY")
+        
     f.close()
+    b42.close()
+    beeest.close()
+    #b41.close()
 
 if __name__ == "__main__":
 
@@ -70,11 +88,12 @@ if __name__ == "__main__":
         if os.path.exists("RESULTS/best.txt"): 
 
             best_input = open("RESULTS/best.txt", 'r').read().split('\n')
-            for subset in best_input:
-                #print (subset)
-                #print ("1")
-                job = pool.apply_async(cracker.initial_exhaustion_grunds, (subset,q))
-                jobs.append(job)
+            with open("RESULTS/best.txt", 'r') as best:
+                for subset in best:
+                    #print (subset)
+                    #print ("1")
+                    job = pool.apply_async(cracker.initial_exhaustion_grunds, (subset,q))
+                    jobs.append(job)
         else:
             print ("Result file not found!")
 

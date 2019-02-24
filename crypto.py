@@ -30,12 +30,10 @@ class Enigma:
             onecipher = ""
             r3pos += 1
 
-            #neede four double stepping of VI, VII, VIII
+            #needed for double stepping of VI, VII, VIII
             stepagain1 = False # 2 notches on VI VII VIII --- moving slowest rotor
             stepagain2 = False # 2 notches on VI VII VIII --- moving middle rotor
             
-            # doublestepagain2 = False # magic
-
             if self.rotors[3].step == 13 and r3pos == 26: 
                 stepagain2 = True
 
